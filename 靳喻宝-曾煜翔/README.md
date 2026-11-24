@@ -1,3 +1,4 @@
+
 # 八界杯创新挑战赛初赛作品：八界机器人关节展示、运动学与仿真触碰
 
 本目录是初赛作品的完整提交单元，按官方示例的章节顺序组织：作品信息、目录结构、运行环境与依赖、三道题的实现与运行、作答格式与单位、复现步骤与材料、提交前自查、原创内容与引用来源。三题源码、官方模型与仿真资源、输入、作答、运行日志和演示视频都在这里，不依赖本目录之外的任何文件。
@@ -9,10 +10,10 @@
 
 **成员分工**：
 
-| 成员  | 承担部分                                                                                                          |
-| --- | ------------------------------------------------------------------------------------------------------------- |
+| 成员   | 承担部分                                                                                                                                                                            |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 靳喻宝 | 算法与运动学：题二 `base_footprint → objects_link` 关节链提取、刚体变换与 TF2 交叉验证；题三增量 IK 规划、按玩具形态选择的接触姿态与触碰判定；题一关节抽样规则与包围盒净空模型。 |
-| 曾煜翔 | 仿真与工程化：题一 ROS 2 驱动节点与 RViz 展示；题三 Isaac Sim 4.5 场景装配、ROS 2 Bridge 与启动器（原生 / 容器两条入口）；三题日志、演示视频与提交材料的整理。         |
+| 曾煜翔 | 仿真与工程化：题一 ROS 2 驱动节点与 RViz 展示；题三 Isaac Sim 4.5 场景装配、ROS 2 Bridge 与启动器（原生 / 容器两条入口）；三题日志、演示视频与提交材料的整理。                      |
 
 两人共同负责三题的联调、实机与仿真验证、结果复核与文档校对。
 
@@ -23,11 +24,11 @@
 - **作品仓库**：AtomGit 独立作品仓库，地址在建仓后回填为 `https://atomgit.com/<用户名或组织名>/<仓库名>`。
 - **实现状态**：
 
-| 题目                 | 已完成                                              | 待完成 | 实际验证情况                                                                                                                         |
-| ------------------ | ------------------------------------------------ | --- | ------------------------------------------------------------------------------------------------------------------------------ |
-| 题目一 · 关节分步驱动       | 五阶段驱动、每阶段保持 `pause_sec`、10 关节关键帧、包围盒净空记录、RViz 展示 | 无   | 无界面实跑 1 例 5 关键帧，退出码 0；作答与官方 `q1_all_seed7` 示例十关节逐值一致，SHA-256 `6e7db6ba…dc2081`；RViz 实录见 `video/q1_rviz.mp4`                    |
-| 题目二 · 正向运动学        | URDF 关节链正解、两组位姿输出、TF2 独立复核、单元测试                  | 无   | 正式测例 1 例求解通过；`--verify` 三组复核误差均 < 1e-15（阈值 1e-8 m / 1e-7 rad）；跨自研与 TF2 的位姿链复算误差 0.0 m                                          |
-| 题目三 · Isaac Sim 触碰 | 场景加载、ROS 2 Bridge、三例连续触碰、接触证据留档、作答原子写入           | 无   | 整轮三例 `outcome=contact`、`visible_surface=touch`，`exit=ok`、`written_rows=3`（run `20261124T043221Z-c67f31`，77.8 s）；作答与接触快照关节值逐值一致 |
+| 题目                     | 已完成                                                                         | 待完成 | 实际验证情况                                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 题目一 · 关节分步驱动   | 五阶段驱动、每阶段保持 `pause_sec`、10 关节关键帧、包围盒净空记录、RViz 展示 | 无     | 无界面实跑 1 例 5 关键帧，退出码 0；作答与官方 `q1_all_seed7` 示例十关节逐值一致，SHA-256 `6e7db6ba…dc2081`；RViz 实录见 `video/q1_rviz.mp4`               |
+| 题目二 · 正向运动学     | URDF 关节链正解、两组位姿输出、TF2 独立复核、单元测试                          | 无     | 正式测例 1 例求解通过；`--verify` 三组复核误差均 < 1e-15（阈值 1e-8 m / 1e-7 rad）；跨自研与 TF2 的位姿链复算误差 0.0 m                                         |
+| 题目三 · Isaac Sim 触碰 | 场景加载、ROS 2 Bridge、三例连续触碰、接触证据留档、作答原子写入               | 无     | 整轮三例 `outcome=contact`、`visible_surface=touch`，`exit=ok`、`written_rows=3`（run `20261124T043221Z-c67f31`，77.8 s）；作答与接触快照关节值逐值一致 |
 
 **运行限制（如实说明）**：
 
@@ -99,18 +100,18 @@
 
 ### 3.2 本作品依赖
 
-| 用途    | 依赖                                                             | 版本                                                | 安装方式                                                                                                          |
-| ----- | -------------------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| 通用    | Ubuntu                                                         | 22.04 LTS                                         | 官方镜像                                                                                                          |
-| 通用    | ROS 2                                                          | Humble（`ros-humble-desktop`）                      | `sudo apt install ros-humble-desktop`                                                                         |
-| 通用    | Python                                                         | 3.10（Humble 自带 `rclpy` 为 cp310）                   | 随 ROS 2                                                                                                       |
-| 题目一   | `colcon`、`ament_cmake`、`xacro`、`robot_state_publisher`、`rviz2` | 随 Humble                                          | `sudo apt install python3-colcon-common-extensions ros-humble-rviz2`                                          |
-| 题目二   | NumPy                                                          | 实测 1.21.5（Ubuntu 22.04 系统包）与 1.26.0（Isaac Sim 内建） | `sudo apt install python3-numpy`                                                                              |
-| 题目二复核 | `tf2_ros`、`robot_state_publisher`                              | 随 Humble                                          | 同上                                                                                                            |
-| 题目三   | SciPy                                                          | 实测 1.10.1（Isaac Sim 内建）；系统 Python 需 1.8+          | `sudo apt install python3-scipy`                                                                              |
-| 题目三   | Isaac Sim                                                      | 4.5（含 `python.sh`、`exts/`、`extscache/`）           | 官方安装包，或按本目录 `src/question3_project/Dockerfile` 构建镜像 `bajie/sim:humble45`（基于 `nvcr.io/nvidia/isaac-sim:4.5.0`） |
-| 题目三   | NVIDIA 驱动                                                      | 535~580                                           | 系统驱动；595.x 会在 RTX 初始化时段错误                                                                                     |
-| 题目三   | `rmw_fastrtps_cpp`                                             | 随 Humble                                          | `sudo apt install ros-humble-rmw-fastrtps-cpp`                                                                |
+| 用途       | 依赖                                                                         | 版本                                                          | 安装方式                                                                                                                               |
+| ---------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| 通用       | Ubuntu                                                                       | 22.04 LTS                                                     | 官方镜像                                                                                                                               |
+| 通用       | ROS 2                                                                        | Humble（`ros-humble-desktop`）                              | `sudo apt install ros-humble-desktop`                                                                                                |
+| 通用       | Python                                                                       | 3.10（Humble 自带 `rclpy` 为 cp310）                        | 随 ROS 2                                                                                                                               |
+| 题目一     | `colcon`、`ament_cmake`、`xacro`、`robot_state_publisher`、`rviz2` | 随 Humble                                                     | `sudo apt install python3-colcon-common-extensions ros-humble-rviz2`                                                                 |
+| 题目二     | NumPy                                                                        | 实测 1.21.5（Ubuntu 22.04 系统包）与 1.26.0（Isaac Sim 内建） | `sudo apt install python3-numpy`                                                                                                     |
+| 题目二复核 | `tf2_ros`、`robot_state_publisher`                                       | 随 Humble                                                     | 同上                                                                                                                                   |
+| 题目三     | SciPy                                                                        | 实测 1.10.1（Isaac Sim 内建）；系统 Python 需 1.8+            | `sudo apt install python3-scipy`                                                                                                     |
+| 题目三     | Isaac Sim                                                                    | 4.5（含 `python.sh`、`exts/`、`extscache/`）            | 官方安装包，或按本目录 `src/question3_project/Dockerfile` 构建镜像 `bajie/sim:humble45`（基于 `nvcr.io/nvidia/isaac-sim:4.5.0`） |
+| 题目三     | NVIDIA 驱动                                                                  | 535~580                                                       | 系统驱动；595.x 会在 RTX 初始化时段错误                                                                                                |
+| 题目三     | `rmw_fastrtps_cpp`                                                         | 随 Humble                                                     | `sudo apt install ros-humble-rmw-fastrtps-cpp`                                                                                       |
 
 外部材料与获取条件：
 
@@ -131,10 +132,10 @@ bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺�
 
 以下命令一律在**作品目录内**执行；输入固定读 `inputs/q*_demo_input.jsonl`，作答固定写 `answers/q*_demo_output.jsonl`。
 
-| 题目                 | 源码                       | 输入                           | 作答                             |
-| ------------------ | ------------------------ | ---------------------------- | ------------------------------ |
-| 题目一 · 关节分步驱动       | `src/question1_project/` | `inputs/q1_demo_input.jsonl` | `answers/q1_demo_output.jsonl` |
-| 题目二 · 正向运动学        | `src/question2_project/` | `inputs/q2_demo_input.jsonl` | `answers/q2_demo_output.jsonl` |
+| 题目                     | 源码                       | 输入                           | 作答                             |
+| ------------------------ | -------------------------- | ------------------------------ | -------------------------------- |
+| 题目一 · 关节分步驱动   | `src/question1_project/` | `inputs/q1_demo_input.jsonl` | `answers/q1_demo_output.jsonl` |
+| 题目二 · 正向运动学     | `src/question2_project/` | `inputs/q2_demo_input.jsonl` | `answers/q2_demo_output.jsonl` |
 | 题目三 · Isaac Sim 触碰 | `src/question3_project/` | `inputs/q3_demo_input.jsonl` | `answers/q3_demo_output.jsonl` |
 
 ### 4.1 题目一 关节分步驱动与 RViz 展示
@@ -161,13 +162,13 @@ bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺�
 
 日志里打印的「净空下界」是**整段插值运动的保守下界**：先取该段两端之间逐帧几何下界的最小值，再减去这一段里任一点可能移动的距离（旋转关节按半径 × 转角的估计）。臂段转角大，扣掉的余量也大，因此日志值比该帧的几何值更负，两者不能混着比：
 
-| 阶段            | 日志「净空下界」（整段保守，地面 / 机身） | 该帧静态几何（地面 / 机身，最低连杆）                 |
-| ------------- | ---------------------- | ------------------------------------ |
-| lift          | 0.514 / −0.200         | 0.759 / 0.044（`arm1_link`）           |
-| head          | 0.759 / 0.044          | 0.759 / 0.044（`arm1_link`）           |
-| arm           | −0.807 / −0.407        | −0.056 / 0.006（`gripper_right_link`） |
-| gripper_open  | −0.070 / 0.006         | −0.054 / 0.006（`gripper_right_link`） |
-| gripper_close | −0.070 / 0.006         | −0.056 / 0.006（`gripper_right_link`） |
+| 阶段          | 日志「净空下界」（整段保守，地面 / 机身） | 该帧静态几何（地面 / 机身，最低连杆）     |
+| ------------- | ----------------------------------------- | ----------------------------------------- |
+| lift          | 0.514 / −0.200                           | 0.759 / 0.044（`arm1_link`）            |
+| head          | 0.759 / 0.044                             | 0.759 / 0.044（`arm1_link`）            |
+| arm           | −0.807 / −0.407                         | −0.056 / 0.006（`gripper_right_link`） |
+| gripper_open  | −0.070 / 0.006                           | −0.054 / 0.006（`gripper_right_link`） |
+| gripper_close | −0.070 / 0.006                           | −0.056 / 0.006（`gripper_right_link`） |
 
 单位米。「整段保守」列取自 `assets/q1_run.log`；lift 段的最小值落在起点（零位 0.514 m），因此比该帧静态值低；arm 段的 −0.807 m 中几何只占 −0.056 m，其余是整段运动余量——夹爪实际下探到地面以下 5.6 cm，与 RViz 画面一致。阈值 5 cm / 2 cm 两档都不满足，正是不阻断的理由。
 
@@ -184,7 +185,6 @@ bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz 展示三维�
 `run_q1.sh` 自动 `source` ROS 2、`colcon build` 两个包并 `source install/setup.bash`，随后启动节点。输入由 `input_file` 参数读取 `inputs/q1_demo_input.jsonl`；作答写入 `answers/q1_demo_output.jsonl`；终端输出同时落到 `assets/q1_run.log`（可用 `Q1_LOG` 指定别的路径）。**预期完成标志**：日志末尾出现 `[q1] 完成：… 共 1 行`，作答文件 1 行、5 个关键帧。实测耗时约 30 s（五次移动各 3 s + 三次 5 s 保持）。手动命令等价形式见 `src/question1_project/README.md`。
 
 **验收与演示**：RViz 中可见完整动作顺序（升降 → 头部 → 机械臂 → 夹爪张开 → 夹爪闭合）；关键帧顺序与关节字段齐全，最终状态与最后一帧一致。完整终端日志见 `assets/q1_run.log`，RViz 演示视频见 `video/q1_rviz.mp4`。
-
 
 ### 4.2 题目二 正向运动学与坐标变换
 
@@ -274,11 +274,11 @@ Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 - `base_footprint` 是底盘坐标系，`objects_link` 是夹爪的抓取参考坐标系。
 - 字段清单：
 
-| 题目  | 每行字段                                                                                                 |
-| --- | ---------------------------------------------------------------------------------------------------- |
-| 题目一 | `id`、`step`、`keyframes`（5 帧，每帧 `name` + `joint_state`）、`final_joint_state`                           |
+| 题目   | 每行字段                                                                                                               |
+| ------ | ---------------------------------------------------------------------------------------------------------------------- |
+| 题目一 | `id`、`step`、`keyframes`（5 帧，每帧 `name` + `joint_state`）、`final_joint_state`                        |
 | 题目二 | `id`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`（各含 `xyz` / `rpy` / `quat_xyzw`） |
-| 题目三 | `id`、`final_joint_state`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`             |
+| 题目三 | `id`、`final_joint_state`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`                    |
 
 - 当前三份作答的 SHA-256：`answers/q1_demo_output.jsonl` = `6e7db6baf7f1f5a2…9fdc2081`，`answers/q2_demo_output.jsonl` = `98fd3d8092265eef…42474cc37`，`answers/q3_demo_output.jsonl` = `4a404ccd046cc88a…1a1916dd`（完整值见 `assets/manifest.json`）。
 - 题目三的玩具位姿为**接触时刻的实测值**，不是输入的初始位姿：玩具被碰到后本身会位移（日志记 `max_toy_shift_mm` 0.15~1.61 mm），这一点在核对时需注意。
@@ -301,10 +301,10 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 
 ### 6.1 作品视频要求
 
-| 文件                   | 对应题目 | 内容                             | 规格                                                                    |
-| -------------------- | ---- | ------------------------------ | --------------------------------------------------------------------- |
-| `video/q1_rviz.mp4`  | 题目一  | RViz 内完整展示五个阶段的关节驱动            | 32.6 s，976×720，25 fps，H.264 + AAC，888,772 字节（0.89 MB）                 |
-| `video/q3_touch.mp4` | 题目三  | Isaac Sim 4.5 内魔方、恐龙、软玩具三例触碰实录 | 3 min 35 s（214.6 s），832×544，25 fps，H.264 + AAC，24,364,079 字节（24.4 MB） |
+| 文件                   | 对应题目 | 内容                                           | 规格                                                                             |
+| ---------------------- | -------- | ---------------------------------------------- | -------------------------------------------------------------------------------- |
+| `video/q1_rviz.mp4`  | 题目一   | RViz 内完整展示五个阶段的关节驱动              | 32.6 s，976×720，25 fps，H.264 + AAC，888,772 字节（0.89 MB）                   |
+| `video/q3_touch.mp4` | 题目三   | Isaac Sim 4.5 内魔方、恐龙、软玩具三例触碰实录 | 3 min 35 s（214.6 s），832×544，25 fps，H.264 + AAC，24,364,079 字节（24.4 MB） |
 
 - 两个必交视频均不超过 **30,000,000 字节**（合计 25,252,851 字节），容器 MP4、视频 H.264、音频 AAC，符合题面的推荐格式，导出后已核对可正常播放。
 - 题目二视频按题面为可选，本作品未录制，不影响提交。
@@ -323,36 +323,36 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 
 - [ ] 已填写作品信息、成员分工、功能与创新点及作品版本（前三项已完成；作品版本与仓库地址需建仓推送后回填，见第一节）。
 - [ ] 已在 AtomGit 上重新创建独立作品仓库，并按飞书作品提交表要求登记仓库链接、作品信息及评审访问权限。
-- [x] 三道题的完整源码和必要配置均放入对应的 `src/` 目录。
-- [x] 已列明依赖版本、安装方法、各题执行目录及实际启动命令（第三、四节）。
-- [x] 每道题的命令均能找到对应输入并生成作答文件。
-- [x] 输出采用 JSONL，测例编号、关节字段、位姿字段与单位符合题面要求（第五节）。
-- [x] 已在 `assets/` 提供各题完整运行日志，在 `video/` 提供题目一、题目三的演示视频。
-- [x] 单个视频文件大小不超过 30 MB，视频能够正常播放，关键动作与结果清晰（6.1）。
-- [x] 已在文档中说明实际验证结果、尚未完成的功能和运行限制（第一节「实现状态」与「运行限制」）。
-- [x] 外部材料的来源、版本、许可与访问条件已写明（3.2 与第八节）。
-- [x] 提交材料范围已检查，密钥、访问令牌、个人隐私数据及无权公开的材料已清理；`build/`、`install/`、`log/`、`__pycache__` 已由 `.gitignore` 排除，交付目录内也不再保留。
+- [X] 三道题的完整源码和必要配置均放入对应的 `src/` 目录。
+- [X] 已列明依赖版本、安装方法、各题执行目录及实际启动命令（第三、四节）。
+- [X] 每道题的命令均能找到对应输入并生成作答文件。
+- [X] 输出采用 JSONL，测例编号、关节字段、位姿字段与单位符合题面要求（第五节）。
+- [X] 已在 `assets/` 提供各题完整运行日志，在 `video/` 提供题目一、题目三的演示视频。
+- [X] 单个视频文件大小不超过 30 MB，视频能够正常播放，关键动作与结果清晰（6.1）。
+- [X] 已在文档中说明实际验证结果、尚未完成的功能和运行限制（第一节「实现状态」与「运行限制」）。
+- [X] 外部材料的来源、版本、许可与访问条件已写明（3.2 与第八节）。
+- [X] 提交材料范围已检查，密钥、访问令牌、个人隐私数据及无权公开的材料已清理；`build/`、`install/`、`log/`、`__pycache__` 已由 `.gitignore` 排除，交付目录内也不再保留。
 
 ## 八、原创内容与引用来源
 
 **自行实现的内容**：
 
-| 范围  | 自行实现的部分                                                                                                                                                   |
-| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 范围   | 自行实现的部分                                                                                                                                                                                                                 |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 题目一 | `bajie_tasks/q1_drive.py`（五阶段驱动、`seed` 抽样、关键帧与作答组装、原子写文件）、`bajie_tasks/q1_safety.py`（URDF 包围盒构造、关节树正解、整段插值净空估计）、`q1_rviz.launch.py`、单元测试；`run_q1.sh` 启动脚本 |
-| 题目二 | `fk.py`（URDF 关节链提取与正向运动学）、`solve_q2.py`（JSONL 读写、位姿变换、`rpy`/四元数互转、原子写出）、`verify_tf.py`（TF2 独立复核）、单元测试                                                     |
-| 题目三 | `run_touch.py`、`touch.py`（增量 IK、smoothstep 路点、按玩具形态的候选姿态、接触判定与作答原子写入）、`bridge.py`（ROS 2 桥接）、`run_q3.sh` / `run_docker.sh` 启动器、`Dockerfile`、单元测试           |
-| 工程化 | `src/question1_project/run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py`、`assets/manifest.json` 与 `assets/q3_evidence_index.json` 的生成逻辑                             |
+| 题目二 | `fk.py`（URDF 关节链提取与正向运动学）、`solve_q2.py`（JSONL 读写、位姿变换、`rpy`/四元数互转、原子写出）、`verify_tf.py`（TF2 独立复核）、单元测试                                                                    |
+| 题目三 | `run_touch.py`、`touch.py`（增量 IK、smoothstep 路点、按玩具形态的候选姿态、接触判定与作答原子写入）、`bridge.py`（ROS 2 桥接）、`run_q3.sh` / `run_docker.sh` 启动器、`Dockerfile`、单元测试                      |
+| 工程化 | `src/question1_project/run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py`、`assets/manifest.json` 与 `assets/q3_evidence_index.json` 的生成逻辑                                                      |
 
 **引用的第三方材料**：
 
-| 材料                                                                  | 来源                                                     | 版本 / 标识                                                                   | 许可与获取条件                                                                                            |
-| ------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| 八界机器人 URDF 模型包（`src/bajie_robot/`）                                  | `https://atomgit.com/ecovacs-bajie/ecovacs-bajie-urdf` | 上游提交 `907b061`；入口 `urdf/bajie_robot.urdf.xacro` SHA-256 `6dc26b06…0d8f49` | 随比赛提供，按比赛要求在本次作答范围内使用；上游仓库未附明确许可声明，故本作品原样引用、未作几何或 `origin` 修改                                      |
-| 八界仿真资源包（`src/bajie_sim/`）                                           | `https://atomgit.com/ecovacs-bajie/ecovacs-bajie-sim`  | 上游提交 `2fcd186`；入口 `scene/abr_scene.usd` SHA-256 `42d98824…628735`         | 同上；`scene/` 与 `models/` 为官方原件，仅补 `package.xml`、`CMakeLists.txt` 两个 shim 以便 colcon 识别资源目录，资源文件本身未改动 |
-| 官方容器基础镜像                                                            | `nvcr.io/nvidia/isaac-sim:4.5.0`                       | 4.5.0                                                                     | NVIDIA NGC 许可；首次拉取需 `docker login nvcr.io`，镜像仅用于复现，不作为提交内容                                         |
-| NumPy                                                               | PyPI / Ubuntu 包                                        | 实测 1.21.5、1.26.0                                                          | BSD-3-Clause                                                                                       |
-| SciPy                                                               | PyPI / Ubuntu 包                                        | 实测 1.8.0、1.10.1                                                           | BSD-3-Clause                                                                                       |
-| ROS 2 Humble（`rclpy`、`tf2`、`robot_state_publisher`、`xacro`、`rviz2`） | ROS 2 官方发行版                                            | Humble                                                                    | Apache-2.0 / BSD-3-Clause 等，按发行版条款使用                                                               |
+| 材料                                                                                | 来源                                                     | 版本 / 标识                                                                             | 许可与获取条件                                                                                                                              |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 八界机器人 URDF 模型包（`src/bajie_robot/`）                                      | `https://atomgit.com/ecovacs-bajie/ecovacs-bajie-urdf` | 上游提交 `907b061`；入口 `urdf/bajie_robot.urdf.xacro` SHA-256 `6dc26b06…0d8f49` | 随比赛提供，按比赛要求在本次作答范围内使用；上游仓库未附明确许可声明，故本作品原样引用、未作几何或 `origin` 修改                          |
+| 八界仿真资源包（`src/bajie_sim/`）                                                | `https://atomgit.com/ecovacs-bajie/ecovacs-bajie-sim`  | 上游提交 `2fcd186`；入口 `scene/abr_scene.usd` SHA-256 `42d98824…628735`         | 同上；`scene/` 与 `models/` 为官方原件，仅补 `package.xml`、`CMakeLists.txt` 两个 shim 以便 colcon 识别资源目录，资源文件本身未改动 |
+| 官方容器基础镜像                                                                    | `nvcr.io/nvidia/isaac-sim:4.5.0`                       | 4.5.0                                                                                   | NVIDIA NGC 许可；首次拉取需 `docker login nvcr.io`，镜像仅用于复现，不作为提交内容                                                        |
+| NumPy                                                                               | PyPI / Ubuntu 包                                         | 实测 1.21.5、1.26.0                                                                     | BSD-3-Clause                                                                                                                                |
+| SciPy                                                                               | PyPI / Ubuntu 包                                         | 实测 1.8.0、1.10.1                                                                      | BSD-3-Clause                                                                                                                                |
+| ROS 2 Humble（`rclpy`、`tf2`、`robot_state_publisher`、`xacro`、`rviz2`） | ROS 2 官方发行版                                         | Humble                                                                                  | Apache-2.0 / BSD-3-Clause 等，按发行版条款使用                                                                                              |
 
 未使用其他开源算法库、预训练模型或数据集；题目三的运动规划、接触判定均为本作品自行实现，未移植第三方代码。
