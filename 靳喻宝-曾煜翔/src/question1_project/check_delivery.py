@@ -12,8 +12,8 @@
   5. 官方资源指纹（URDF xacro 与 scene USD 的 SHA-256）
 
 用法：
-    python3 check_delivery.py
-    python3 check_delivery.py --root /path/to/bajie-demo
+    python3 src/question1_project/check_delivery.py
+    python3 src/question1_project/check_delivery.py --root /path/to/bajie-demo
 """
 from __future__ import annotations
 
@@ -131,7 +131,7 @@ def check_pose(pose, where: str) -> bool:
 
 
 def urdf_limits(root: Path) -> dict[str, tuple[float, float]]:
-    path = root / "generated" / "bajie_robot.urdf"
+    path = root / "src" / "question2_project" / "generated" / "bajie_robot.urdf"
     if not path.is_file():
         warn("URDF 限位", f"缺少 {path.relative_to(root)}，跳过限位检查")
         return {}
@@ -267,9 +267,10 @@ def write_manifest(root: Path, target: Path) -> None:
     patterns = [
         "answers/*.jsonl", "assets/*.log", "assets/q3_logs/**/*.json", "video/*",
         "inputs/*.jsonl",
-        "src/question1_project/**/*.py", "src/question2_project/**/*.py",
+        "src/question1_project/**/*.py", "src/question1_project/*.sh",
+        "src/question2_project/**/*.py", "src/question2_project/*.sh",
         "src/question3_project/**/*.py", "src/question3_project/*.sh",
-        "src/question3_project/*.kit", "generated/bajie_robot.urdf",
+        "src/question3_project/*.kit", "src/question2_project/generated/bajie_robot.urdf",
     ]
     items = {}
     for pattern in patterns:
@@ -305,8 +306,8 @@ def check_q3_evidence(root: Path) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="八界杯初赛交付物自检")
-    parser.add_argument("--root", default=str(Path(__file__).resolve().parent),
-                        help="作品根目录（默认脚本所在目录）")
+    parser.add_argument("--root", default=str(Path(__file__).resolve().parents[2]),
+                        help="作品根目录（默认为本脚本上两级，即 src/question1_project 的父目录的父目录）")
     parser.add_argument("--manifest", default=None,
                         help="生成哈希清单到指定路径（默认不写任何文件）")
     args = parser.parse_args()

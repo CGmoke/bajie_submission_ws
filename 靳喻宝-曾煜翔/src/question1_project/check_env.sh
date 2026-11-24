@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # 作品自检：确认本目录在干净机器上能跑三题，缺什么直接告诉你装什么。
-#   bash check_env.sh        # 全部可用退出码 0，存在缺失项退出码 1
+#   bash src/question1_project/check_env.sh        # 全部可用退出码 0，存在缺失项退出码 1
 set -uo pipefail
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+project=$(cd -- "$here/../.." && pwd)
 cd "$project"
 
 ok=0; bad=0
@@ -17,7 +18,7 @@ echo
 
 # ---------- 交付物完整性 ----------
 echo "== 交付物完整性 =="
-for f in generated/bajie_robot.urdf \
+for f in src/question2_project/generated/bajie_robot.urdf \
          src/bajie_robot/urdf/bajie_robot.urdf.xacro \
          src/bajie_sim/scene/abr_scene.usd \
          inputs/q1_demo_input.jsonl inputs/q2_demo_input.jsonl inputs/q3_demo_input.jsonl; do
@@ -64,7 +65,7 @@ fi
 if [[ -n $np ]] && "$np" -c 'import scipy' 2>/dev/null; then
     good "scipy：$("$np" -c 'import scipy; print(scipy.__version__)')"
 else
-    note "系统 Python 缺 scipy：题三规划与 run_tests.sh 的题三用例需要它"
+    note "系统 Python 缺 scipy：题三规划与 src/question1_project/run_tests.sh 的题三用例需要它"
     note "  sudo apt install python3-scipy（Isaac Sim 自带 Python 通常已有）"
 fi
 echo
@@ -155,8 +156,8 @@ echo
 echo "== 汇总 =="
 echo "  可用项 $ok 个，缺失项 $bad 个"
 if ((bad == 0)); then
-    echo "  三题环境齐备，可直接执行 bash run_all.sh"
+    echo "  三题环境齐备，可直接执行 bash src/question1_project/run_all.sh"
     exit 0
 fi
-echo "  缺失项可能只影响其中一题；按上面提示补齐后再执行 bash run_all.sh"
+echo "  缺失项可能只影响其中一题；按上面提示补齐后再执行 bash src/question1_project/run_all.sh"
 exit 1

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # 题一：关节分步驱动。默认无界面（评审复跑用这条）；需要录 RViz 演示时加 --gui。
-#   bash run_q1.sh            # 无界面，只跑驱动节点
-#   bash run_q1.sh --gui      # 同时启动 RViz（需要可用的图形桌面）
+#   bash src/question1_project/run_q1.sh            # 无界面，只跑驱动节点
+#   bash src/question1_project/run_q1.sh --gui      # 同时启动 RViz（需要可用的图形桌面）
 set -euo pipefail
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+project=$(cd -- "$here/../.." && pwd)
 cd "$project"
 
 mode=headless
@@ -12,7 +13,7 @@ while (($#)); do
     case $1 in
         --gui) mode=gui; shift ;;
         --headless) mode=headless; shift ;;
-        -h|--help) sed -n '2,5p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,4p' "$0"; exit 0 ;;
         *) echo "未知参数: $1" >&2; exit 2 ;;
     esac
 done

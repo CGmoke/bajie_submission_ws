@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # 三题单元测试一次跑完。题一需要先编译（脚本会自动补编译）。
-#   bash run_tests.sh
+#   bash src/question1_project/run_tests.sh
 set -uo pipefail
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+project=$(cd -- "$here/../.." && pwd)
 cd "$project"
 
 py=""

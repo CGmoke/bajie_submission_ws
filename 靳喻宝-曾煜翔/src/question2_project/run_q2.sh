@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 # 题二：正向运动学与坐标变换。只需要 Python 3 + NumPy，不启动 ROS 节点。
-#   bash run_q2.sh            # 求解并写作答
-#   bash run_q2.sh --verify   # 额外用 ROS 2 TF2 独立复核
+#   bash src/question2_project/run_q2.sh            # 求解并写作答
+#   bash src/question2_project/run_q2.sh --verify   # 额外用 ROS 2 TF2 独立复核
 set -euo pipefail
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+project=$(cd -- "$here/../.." && pwd)
 cd "$project"
 
 verify=0
 while (($#)); do
     case $1 in
         --verify) verify=1; shift ;;
-        -h|--help) sed -n '2,5p' "$0"; exit 0 ;;
+        -h|--help) sed -n '2,4p' "$0"; exit 0 ;;
         *) echo "未知参数: $1" >&2; exit 2 ;;
     esac
 done
 
-urdf=${BAJIE_URDF:-$project/generated/bajie_robot.urdf}
+urdf=${BAJIE_URDF:-$project/src/question2_project/generated/bajie_robot.urdf}
 input=$project/inputs/q2_demo_input.jsonl
 output=$project/answers/q2_demo_output.jsonl
 log=${Q2_LOG:-$project/assets/q2_run.log}

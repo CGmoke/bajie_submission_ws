@@ -36,7 +36,7 @@
 ## 环境与依赖
 
 - 官方仿真资源 [https://atomgit.com/ecovacs-bajie/ecovacs-bajie-sim](https://atomgit.com/ecovacs-bajie/ecovacs-bajie-sim)。作品目录已完整包含 `src/bajie_sim`（含 `scene/`、`machine/`、`models/`），无需再下载；必须保留完整的 `models/` 相对目录，只保留入口文件不可用。
-- 按[题二说明](../question2_project/README.md)准备的官方 URDF，作品目录已展开为 `generated/bajie_robot.urdf`，供本题规划求解使用。
+- 按[题二说明](../question2_project/README.md)准备的官方 URDF，作品目录已展开为 `src/question2_project/generated/bajie_robot.urdf`，供本题规划求解使用。
 - Docker、可用的 NVIDIA 容器运行时与 `nvidia-smi`；镜像基于官方 `nvcr.io/nvidia/isaac-sim:4.5.0` 并安装 ROS 2 Humble（Python 3.10，使用 Isaac Sim 自带的 NumPy 与 SciPy）。镜像用**本目录的 [`Dockerfile`](Dockerfile)** 构建，不需要仓库外的任何文件：
 
   ```bash
@@ -80,7 +80,7 @@ Q3_RESULT_DIR="$out" \
   bash src/question3_project/run_q3.sh 2>&1 | tee "$out/run.log"
 ```
 
-作品目录内资源为 `$PWD/src/bajie_sim` 与 `$PWD/generated/bajie_robot.urdf`；输出目录独立于正式提交目录，也可不设 `Q3_RESULT_DIR`，启动器会创建并打印临时输出目录。
+作品目录内资源为 `$PWD/src/bajie_sim` 与 `$PWD/src/question2_project/generated/bajie_robot.urdf`；输出目录独立于正式提交目录，也可不设 `Q3_RESULT_DIR`，启动器会创建并打印临时输出目录。
 
 ### 启动器参数（环境变量）
 
@@ -151,7 +151,7 @@ bash src/question3_project/run_docker.sh --case rubik_cube
 
 ## GUI 仿真（Docker + 原生窗口）
 
-默认以无界面方式运行；需要观察三维画面时打开 Isaac Sim 原生窗口。容器环境用下面的 `Q3_GUI=1` 命令；原生 Isaac Sim 环境用 `bash run_q3.sh --gui`：
+默认以无界面方式运行；需要观察三维画面时打开 Isaac Sim 原生窗口。容器环境用下面的 `Q3_GUI=1` 命令；原生 Isaac Sim 环境用 `bash src/question3_project/run_q3.sh --gui`：
 
 ```bash
 out=$(mktemp -d /tmp/bajie-q3-gui.XXXXXX)
@@ -169,7 +169,7 @@ Q3_GUI=1 Q3_STRATEGY=adaptive-fallback Q3_RESULT_DIR="$out" \
 python3 -m unittest discover -s src/question3_project/tests -v
 ```
 
-覆盖三例输入与作答坐标系、轨迹端点与速度限制、按形状转腕、用官方 URDF 求解三例动作、夹爪几何筛选、可见表面正间隙拒绝、先停稳再合指、同一夹指连续接触、接触丢失后的有界微调、失败回退、脱离抬升与链式续接。自适应规划测试使用合成碰撞点；测试需要工作区的 `generated/bajie_robot.urdf`，独立提交目录可用 `BAJIE_URDF` 指定。真实接触和连续动作仍须用 Isaac Sim 验证。
+覆盖三例输入与作答坐标系、轨迹端点与速度限制、按形状转腕、用官方 URDF 求解三例动作、夹爪几何筛选、可见表面正间隙拒绝、先停稳再合指、同一夹指连续接触、接触丢失后的有界微调、失败回退、脱离抬升与链式续接。自适应规划测试使用合成碰撞点；测试需要 `src/question2_project/generated/bajie_robot.urdf`，独立提交目录可用 `BAJIE_URDF` 指定。真实接触和连续动作仍须用 Isaac Sim 验证。
 
 ## 常见问题
 

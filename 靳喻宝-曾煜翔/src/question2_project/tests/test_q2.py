@@ -18,7 +18,7 @@ from solve_q2 import solve_case
 
 PROJECT = Path(__file__).resolve().parents[1]
 INPUT = PROJECT.parents[1] / 'inputs/q2_demo_input.jsonl'
-URDF = Path(os.environ.get('Q2_URDF', PROJECT.parents[1] / 'generated/bajie_robot.urdf'))
+URDF = Path(os.environ.get('Q2_URDF', PROJECT / 'generated/bajie_robot.urdf'))
 
 
 class QuestionTwoTest(unittest.TestCase):

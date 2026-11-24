@@ -67,7 +67,7 @@ class ContactHoldTests(unittest.TestCase):
 
     def test_descent_correction_keeps_finger_angle_and_uses_original_tcp(self):
         case = touch.load_cases(Q3.parents[1] / 'inputs/q3_demo_input.jsonl')[0]
-        planner = touch.Planner(Q3.parents[1] / 'generated/bajie_robot.urdf', case)
+        planner = touch.Planner(Q3.parents[1] / 'src/question2_project/generated/bajie_robot.urdf', case)
         impact = np.array(list(case.joints.values()))
         result = planner.lower_contact_command(impact, impact, 2, np.eye(4))
         self.assertIsNotNone(result)

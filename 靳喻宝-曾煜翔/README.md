@@ -18,7 +18,7 @@
 
 - **作品名称**：八界机器人关节展示、运动学与仿真触碰。
 - **作品简介**：基于官方八界模型完成初赛三题。题目一在 RViz 中按升降 → 头部 → 机械臂 → 夹爪张开 → 夹爪闭合的顺序分步驱动 10 个关节，每个阶段结束记录关键帧并保持 `pause_sec`；题目二不依赖 TF，直接由 URDF 关节链自研正向运动学，给出夹爪在底盘系与物体在夹爪系的位姿，并用独立的 `robot_state_publisher + TF2` 进程交叉复核；题目三在 Isaac Sim 4.5 中经 ROS 2 Bridge 驱动机械臂，对魔方、恐龙、软玩具三件玩具逐一完成真实 PhysX 接触，并把接触瞬间的十关节实测值与三方位姿落成可回溯的证据文件。三题作答均为 JSONL，`id` 与输入一一对应。
-- **创新点**：① 题目二用两套彼此独立的实现（自研 URDF 正解、ROS 2 TF2）互相印证，三个测例误差均在 1e-15 量级；② 题目三按玩具形态选姿态而不是一套参数打天下（魔方贴合侧推、恐龙与软玩具腕部垂直下压且不合指），并用「可见表面接触 + 玩具位移上限」双判据排除擦过与推倒；③ 每次触碰都落成 `run.json` + `contact-<case>.json` + `events.jsonl`，作答的每一行都能回查到具体帧；④ 一条 `run_all.sh` 复现三题，四个自检脚本均以退出码表达结论，可直接接入 CI。
+- **创新点**：① 题目二用两套彼此独立的实现（自研 URDF 正解、ROS 2 TF2）互相印证，三个测例误差均在 1e-15 量级；② 题目三按玩具形态选姿态而不是一套参数打天下（魔方贴合侧推、恐龙与软玩具腕部垂直下压且不合指），并用「可见表面接触 + 玩具位移上限」双判据排除擦过与推倒；③ 每次触碰都落成 `run.json` + `contact-<case>.json` + `events.jsonl`，作答的每一行都能回查到具体帧；④ 一条 `src/question1_project/run_all.sh` 复现三题，四个自检脚本均以退出码表达结论，可直接接入 CI。
 - **作品版本**：本次作答对应作品仓库的首次提交，提交号在建仓推送后回填到此处（当前材料快照时间 2026-11-24）。各作答文件的 SHA-256 已记于本文第五节与 `assets/manifest.json`，可用于核对版本一致性。
 - **作品仓库**：AtomGit 独立作品仓库，地址在建仓后回填为 `https://atomgit.com/<用户名或组织名>/<仓库名>`。
 - **实现状态**：
@@ -41,21 +41,19 @@
 ```text
 靳喻宝-曾煜翔/
 ├── README.md                   # 本文件
-├── check_env.sh                # 环境自检：ROS / NumPy / SciPy / Isaac / 官方资源指纹
-├── check_delivery.py           # 交付自检：结构、限位、四元数、视频体积、资源指纹
-├── run_all.sh                  # 一键依次跑三题
-├── run_q1.sh                   # 题目一（默认无界面，--gui 启动 RViz）
-├── run_q2.sh                   # 题目二（--verify 追加 TF2 复核）
-├── run_q3.sh                   # 题目三·原生 Isaac Sim 入口（转发到 src/question3_project/run_q3.sh）
-├── run_tests.sh                # 三题单元测试（58 项）
 ├── src/
 │   ├── bajie_robot/            # 官方 URDF 包：urdf/ meshes/ calib/ launch/ rviz/
 │   ├── bajie_sim/              # 官方仿真资源：scene/ machine/ models/ scripts/ doc/（约 1.1 GB）
 │   ├── question1_project/      # 题目一源码：bajie_tasks（q1_drive / q1_safety）、launch、test
-│   ├── question2_project/      # 题目二源码：fk.py / solve_q2.py / verify_tf.py / test
+│   │   ├── run_q1.sh           # 题目一入口（默认无界面，--gui 启动 RViz）
+│   │   ├── run_all.sh          # 一键依次跑三题（自检 → 题一 → 题二 → 题三）
+│   │   ├── run_tests.sh        # 三题单元测试（58 项）
+│   │   ├── check_env.sh        # 环境自检：ROS / NumPy / SciPy / Isaac / 官方资源指纹
+│   │   └── check_delivery.py   # 交付自检：结构、限位、四元数、视频体积、资源指纹
+│   ├── question2_project/      # 题目二源码：run_q2.sh、fk.py / solve_q2.py / verify_tf.py / test
+│   │   └── generated/
+│   │       └── bajie_robot.urdf    # 官方 xacro 展开的 URDF，题目二、题目三共用
 │   └── question3_project/      # 题目三源码：run_q3.sh / run_docker.sh / Dockerfile / run_touch.py / touch.py / bridge.py
-├── generated/
-│   └── bajie_robot.urdf        # 由官方 xacro 展开的 URDF，题目二、题目三使用
 ├── inputs/
 │   ├── q1_demo_input.jsonl     # 题目一公开输入
 │   ├── q2_demo_input.jsonl     # 题目二公开输入
@@ -76,16 +74,17 @@
 ├── video/
 │   ├── q1_rviz.mp4             # 题目一 RViz 演示
 │   └── q3_touch.mp4            # 题目三 Isaac Sim 触碰演示
-├── build/  install/  log/      # colcon 构建产物，已由 .gitignore 排除，不入仓库
-└── .gitignore
+└── .gitignore                  # 排除 build/ install/ log/ __pycache__ 等运行产物
 ```
 
 说明：
 
 - 官方模型的入口 `urdf/bajie_robot.urdf.xacro` 位于 `src/bajie_robot/urdf/`，`scene/abr_scene.usd` 位于 `src/bajie_sim/scene/`，两个包内的官方资源与官方仓库逐字节一致（`bajie_sim` 另补了两个 shim 以便 colcon 识别资源目录，见第八节），连杆几何与关节 `origin` 未作任何改动。
 - `src/bajie_sim/models/` 必须与 `scene/` 一起提交：USD 内部用相对路径引用 `../models/...`，只给入口 USD 打不开场景。
-- `generated/bajie_robot.urdf` 由官方 xacro 展开得到并随目录提交，题目二、题目三不需要再手动展开；其网格路径为相对路径，整个目录放到任意位置都能解析。
-- 相对官方示例的目录结构，本作品多出 `generated/`（展开后的 URDF）与根目录的五个入口脚本、两个自检脚本。它们都是运行所必需的：三题命令由根脚本统一封装，避免评审拼接长参数。
+- `src/question2_project/generated/bajie_robot.urdf` 由官方 xacro 展开得到并随目录提交，题目二、题目三不需要再手动展开；其网格路径为相对路径，整个目录放到任意位置都能解析。它放在题二源码目录下，是因为 URDF 解析与正解由题二实现、题三通过 `touch.py` 复用题二的 `fk`；未放进官方包 `src/bajie_robot/`，是为了让官方包保持与上游逐字节一致。
+- 根目录只保留官方示例的 `README.md` 与 `src/ inputs/ answers/ docs/ assets/ video/` 六个目录，`src/` 下也只放官方资源包与三个题目目录。所有入口脚本都放在题目目录内：题一、题二、题三各自的启动脚本在各自目录（`src/question1_project/run_q1.sh`、`src/question2_project/run_q2.sh`、`src/question3_project/run_q3.sh`）；跨三题的自检与一键运行脚本统一放在题一目录（`src/question1_project/` 下的 `run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py`），因为题一目录本就是 colcon 构建的起点、也已包含全仓单测。它们都是运行所必需的：三题命令由脚本统一封装，避免评审拼接长参数。
+- 相对官方示例的目录结构，本作品多出的只有 `src/question2_project/generated/`（展开后的 URDF）与 `src/` 下的入口/自检脚本；根目录层级与官方示例一致。
+- 运行时 `src/question1_project/run_q1.sh` 会在作品目录生成 colcon 的 `build/`、`install/`、`log/`，已在 `.gitignore` 中排除，交付目录内不保留。
 
 ## 三、运行环境与依赖
 
@@ -123,10 +122,10 @@
 
 ```bash
 cd 靳喻宝-曾煜翔
-bash check_env.sh          # 逐项打印 [可用] / [缺失]，缺失项后直接给出安装命令
+bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺失]，缺失项后直接给出安装命令
 ```
 
-`check_env.sh` 全部可用时退出码 0，存在缺失项时退出码 1，并核对官方资源指纹。
+`src/question1_project/check_env.sh` 全部可用时退出码 0，存在缺失项时退出码 1，并核对官方资源指纹。
 
 ## 四、三道题的实现与运行
 
@@ -178,8 +177,8 @@ bash check_env.sh          # 逐项打印 [可用] / [缺失]，缺失项后直�
 
 ```bash
 # 执行目录：作品目录（本 README 所在目录）
-bash run_q1.sh          # 无界面，只跑驱动节点（评审复跑用这条）
-bash run_q1.sh --gui    # 同时启动 RViz 展示三维模型（录演示视频用）
+bash src/question1_project/run_q1.sh          # 无界面，只跑驱动节点（评审复跑用这条）
+bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz 展示三维模型（录演示视频用）
 ```
 
 `run_q1.sh` 自动 `source` ROS 2、`colcon build` 两个包并 `source install/setup.bash`，随后启动节点。输入由 `input_file` 参数读取 `inputs/q1_demo_input.jsonl`；作答写入 `answers/q1_demo_output.jsonl`；终端输出同时落到 `assets/q1_run.log`（可用 `Q1_LOG` 指定别的路径）。**预期完成标志**：日志末尾出现 `[q1] 完成：… 共 1 行`，作答文件 1 行、5 个关键帧。实测耗时约 30 s（五次移动各 3 s + 三次 5 s 保持）。手动命令等价形式见 `src/question1_project/README.md`。
@@ -200,7 +199,7 @@ bash run_q1.sh --gui    # 同时启动 RViz 展示三维模型（录演示视频
 
 **实现要求**（题面要求与对应实现）：
 
-1. 根据关节状态和官方模型计算 `objects_link` 相对 `base_footprint` 的位姿 —— **运动链读取方式**：解析 `generated/bajie_robot.urdf`（官方 xacro 展开，`origin` 未改），从 `objects_link` 沿父关节回溯到 `base_footprint`，得到一条有序关节链并倒序相乘。每段先代入模型给出的 `origin`，再在关节局部系中沿 `axis` 平移（prismatic）或旋转（revolute/continuous），即 `T_origin @ T_motion(q)`。头部俯仰与两指是旁支，其值要读取但不参与这条链；固定关节没有输入量，仍贡献位置与朝向。
+1. 根据关节状态和官方模型计算 `objects_link` 相对 `base_footprint` 的位姿 —— **运动链读取方式**：解析 `src/question2_project/generated/bajie_robot.urdf`（官方 xacro 展开，`origin` 未改），从 `objects_link` 沿父关节回溯到 `base_footprint`，得到一条有序关节链并倒序相乘。每段先代入模型给出的 `origin`，再在关节局部系中沿 `axis` 平移（prismatic）或旋转（revolute/continuous），即 `T_origin @ T_motion(q)`。头部俯仰与两指是旁支，其值要读取但不参与这条链；固定关节没有输入量，仍贡献位置与朝向。
 2. 将物体在底盘坐标系中的位姿变换到夹爪的 `objects_link` 坐标系 —— **坐标变换计算**：`T_objects_link^scene = (T_base^objects_link)^{-1} · T_base^scene`，其中 `T_base^scene` 直接取自输入的 `scene_object_in_base_footprint`（`rpy` 按 Rz·Ry·Rx 转成旋转矩阵）。
 3. 姿态表示转换 —— 内部一律用 4×4 齐次矩阵运算；输出时把旋转矩阵转成 `rpy`（`pitch = asin(−R20)`，`roll = atan2(R21, R22)`，`yaw = atan2(R10, R00)`）与 `quat_xyzw`（按 `[x, y, z, w]` 顺序输出，写入前归一）。两组位姿的 `rpy` 与 `quat_xyzw` 互相自洽，实测互推差 < 1e-18 rad。
 
@@ -212,12 +211,12 @@ bash run_q1.sh --gui    # 同时启动 RViz 展示三维模型（录演示视频
 
 ```bash
 # 执行目录：作品目录
-export BAJIE_URDF="$PWD/generated/bajie_robot.urdf"
+export BAJIE_URDF="$PWD/src/question2_project/generated/bajie_robot.urdf"
 python3 src/question2_project/solve_q2.py --urdf "$BAJIE_URDF" \
   --input inputs/q2_demo_input.jsonl --output answers/q2_demo_output.jsonl 2>&1 | tee assets/q2_run.log
 
-bash run_q2.sh            # 同上，并自动补编译与日志
-bash run_q2.sh --verify   # 追加 robot_state_publisher + TF2 独立复核
+bash src/question2_project/run_q2.sh            # 同上，并自动补编译与日志
+bash src/question2_project/run_q2.sh --verify   # 追加 robot_state_publisher + TF2 独立复核
 ```
 
 求解本身不需要 ROS；`--verify` 才启动 `robot_state_publisher`，建议在干净的 ROS 域内执行。脚本先算完所有行再写文件（先写临时目录、成功后 `replace`），因此解析或计算失败不会覆盖已有作答。**预期完成标志**：终端出现求解完成的提示与 `answers/q2_demo_output.jsonl` 路径，作答 1 行；`--verify` 时三组复核误差均 < 1e-15。实测耗时 < 5 s。
@@ -288,16 +287,16 @@ Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 
 1. 按第三节安装依赖，准备官方模型及仿真资源（本目录已随附，核对 3.1 的两个 SHA-256 即可）。
 2. 核对 `inputs/` 中的测例与正式题面一致（题目一 1 例 `q1_all_seed7`、题目二 1 例 `demo_zero`、题目三 3 例）。
-3. 按第四节各题的实际命令，在作品目录内运行程序：`bash run_q1.sh`、`bash run_q2.sh --verify`、`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh`。也可一条命令依次跑完：`bash run_all.sh`。
+3. 按第四节各题的实际命令，在作品目录内运行程序：`bash src/question1_project/run_q1.sh`、`bash src/question2_project/run_q2.sh --verify`、`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh`。也可一条命令依次跑完：`bash src/question1_project/run_all.sh`。
 4. 逐个测例的实际作答写入 `answers/`（程序自行覆盖，题目三三例全通过才写）。
 5. 在 `assets/` 保存各题完整 `.log`（已随附），在 `video/` 提供题目一与题目三的演示视频（已随附）。
-6. 记录实际运行环境、测试条件与完成情况：环境见第三节，实测结果见第一节「实现状态」与第四节各题「验收与演示」，补充材料在 `docs/提交自查.md`。三题单元测试可一次跑完：`bash run_tests.sh`（期望 58 项全过：5 + 8 + 45）。
+6. 记录实际运行环境、测试条件与完成情况：环境见第三节，实测结果见第一节「实现状态」与第四节各题「验收与演示」，补充材料在 `docs/提交自查.md`。三题单元测试可一次跑完：`bash src/question1_project/run_tests.sh`（期望 58 项全过：5 + 8 + 45）。
 
 交付物自检：
 
 ```bash
-python3 check_delivery.py                                   # 只读：结构、限位、四元数、视频体积、资源指纹
-python3 check_delivery.py --manifest assets/manifest.json   # 另生成哈希清单（唯一写操作）
+python3 src/question1_project/check_delivery.py                                   # 只读：结构、限位、四元数、视频体积、资源指纹
+python3 src/question1_project/check_delivery.py --manifest assets/manifest.json   # 另生成哈希清单（唯一写操作）
 ```
 
 ### 6.1 作品视频要求
@@ -309,14 +308,14 @@ python3 check_delivery.py --manifest assets/manifest.json   # 另生成哈希清
 
 - 两个必交视频均不超过 **30,000,000 字节**（合计 25,252,851 字节），容器 MP4、视频 H.264、音频 AAC，符合题面的推荐格式，导出后已核对可正常播放。
 - 题目二视频按题面为可选，本作品未录制，不影响提交。
-- 录制方式：题目一 `bash run_q1.sh --gui`（需可用图形桌面，无图形栈时无界面模式作答一致但无法录制）；题目三在 Isaac Sim 窗口模式下录制（容器路径 `Q3_GUI=1`，需可用 DISPLAY），先验证单帧再整轮录制。视频为实际运行录屏，未用渲染探针或截图替代。
+- 录制方式：题目一 `bash src/question1_project/run_q1.sh --gui`（需可用图形桌面，无图形栈时无界面模式作答一致但无法录制）；题目三在 Isaac Sim 窗口模式下录制（容器路径 `Q3_GUI=1`，需可用 DISPLAY），先验证单帧再整轮录制。视频为实际运行录屏，未用渲染探针或截图替代。
 
 ### 6.2 仓库登记与提交
 
 1. 在 **AtomGit** 上重新创建独立的作品仓库，把 `靳喻宝-曾煜翔/` 目录放到仓库根，推送整理好的材料（只推这一个目录，不要带开发工作区中的中间产物、归档目录与内部核对文档）。
 2. 在飞书作品提交表中填写作品信息与 AtomGit 仓库的完整主页链接，例如 `https://atomgit.com/用户名或组织名/仓库名`。
 3. 按表单说明配置评审访问权限，确认组委会能够访问所登记的仓库；提交、链接登记与信息更新统一以飞书表单说明为准。
-4. 推送后在干净 clone 中复跑一次自检：`python3 check_delivery.py`，期望 10 项 OK / 0 FAIL。
+4. 推送后在干净 clone 中复跑一次自检：`python3 src/question1_project/check_delivery.py`，期望 10 项 OK / 0 FAIL。
 
 仓库体积约 1.2 GB，其中官方仿真资源（`src/bajie_sim/`）占 1.1 GB；若仓库有单文件或总量限制，可按 3.1 的地址把该目录改为外链并在本节注明版本与 SHA-256。
 
@@ -332,7 +331,7 @@ python3 check_delivery.py --manifest assets/manifest.json   # 另生成哈希清
 - [x] 单个视频文件大小不超过 30 MB，视频能够正常播放，关键动作与结果清晰（6.1）。
 - [x] 已在文档中说明实际验证结果、尚未完成的功能和运行限制（第一节「实现状态」与「运行限制」）。
 - [x] 外部材料的来源、版本、许可与访问条件已写明（3.2 与第八节）。
-- [x] 提交材料范围已检查，密钥、访问令牌、个人隐私数据及无权公开的材料已清理；`build/`、`install/`、`log/`、`__pycache__` 已由 `.gitignore` 排除。
+- [x] 提交材料范围已检查，密钥、访问令牌、个人隐私数据及无权公开的材料已清理；`build/`、`install/`、`log/`、`__pycache__` 已由 `.gitignore` 排除，交付目录内也不再保留。
 
 ## 八、原创内容与引用来源
 
@@ -343,7 +342,7 @@ python3 check_delivery.py --manifest assets/manifest.json   # 另生成哈希清
 | 题目一 | `bajie_tasks/q1_drive.py`（五阶段驱动、`seed` 抽样、关键帧与作答组装、原子写文件）、`bajie_tasks/q1_safety.py`（URDF 包围盒构造、关节树正解、整段插值净空估计）、`q1_rviz.launch.py`、单元测试；`run_q1.sh` 启动脚本 |
 | 题目二 | `fk.py`（URDF 关节链提取与正向运动学）、`solve_q2.py`（JSONL 读写、位姿变换、`rpy`/四元数互转、原子写出）、`verify_tf.py`（TF2 独立复核）、单元测试                                                     |
 | 题目三 | `run_touch.py`、`touch.py`（增量 IK、smoothstep 路点、按玩具形态的候选姿态、接触判定与作答原子写入）、`bridge.py`（ROS 2 桥接）、`run_q3.sh` / `run_docker.sh` 启动器、`Dockerfile`、单元测试           |
-| 工程化 | `run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py`、`assets/manifest.json` 与 `assets/q3_evidence_index.json` 的生成逻辑                             |
+| 工程化 | `src/question1_project/run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py`、`assets/manifest.json` 与 `assets/q3_evidence_index.json` 的生成逻辑                             |
 
 **引用的第三方材料**：
 

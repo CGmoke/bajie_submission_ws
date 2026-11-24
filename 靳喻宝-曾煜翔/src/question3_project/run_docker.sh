@@ -44,10 +44,10 @@ command -v docker >/dev/null || die '缺 docker'
 
 # ---- 作品内资源：默认按提交目录推算，不依赖外部工作区 ----
 scene=${BAJIE_SIM_DIR:-$project/src/bajie_sim}
-urdf=${BAJIE_URDF:-$project/generated/bajie_robot.urdf}
+urdf=${BAJIE_URDF:-$project/src/question2_project/generated/bajie_robot.urdf}
 input=$project/inputs/q3_demo_input.jsonl
 scene=$(realpath -e "$scene" 2>/dev/null) || die "仿真资源目录不存在：${BAJIE_SIM_DIR:-$project/src/bajie_sim}"
-urdf=$(realpath -e "$urdf" 2>/dev/null) || die "URDF 不存在：${BAJIE_URDF:-$project/generated/bajie_robot.urdf}"
+urdf=$(realpath -e "$urdf" 2>/dev/null) || die "URDF 不存在：${BAJIE_URDF:-$project/src/question2_project/generated/bajie_robot.urdf}"
 [[ -f $scene/scene/abr_scene.usd ]] || die "缺少官方场景 $scene/scene/abr_scene.usd"
 [[ -d $scene/models ]] || die "缺少官方模型目录 $scene/models（只保留入口 USD 不可用）"
 [[ -f $input ]] || die "缺少输入 $input"

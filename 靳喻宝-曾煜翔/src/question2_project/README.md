@@ -19,7 +19,7 @@
 
 ## 准备展开后的 URDF
 
-`BajieChain.from_urdf` 只接受**已展开**的 URDF（不能直接传 Xacro）。作品目录已备好 `generated/bajie_robot.urdf`，可直接跳到「运行」。需要重新展开时（官方包在 `src/bajie_robot`）：
+`BajieChain.from_urdf` 只接受**已展开**的 URDF（不能直接传 Xacro）。作品目录已备好 `src/question2_project/generated/bajie_robot.urdf`，可直接跳到「运行」。需要重新展开时（官方包在 `src/bajie_robot`）：
 
 ```bash
 set -eo pipefail
@@ -33,14 +33,14 @@ export BAJIE_URDF="$q2_model_dir/bajie_robot.urdf"
 xacro "$BAJIE_URDF_DIR/urdf/bajie_robot.urdf.xacro" -o "$BAJIE_URDF"
 ```
 
-已有展开文件时，直接把 `BAJIE_URDF` 设为其绝对路径；作品目录可直接用 `generated/bajie_robot.urdf`。计算不需要 ROS 图或模型网格；仅复核需要 ROS 2，建议使用没有其他机器人演示的 ROS 域。
+已有展开文件时，直接把 `BAJIE_URDF` 设为其绝对路径；作品目录可直接用 `src/question2_project/generated/bajie_robot.urdf`。计算不需要 ROS 图或模型网格；仅复核需要 ROS 2，建议使用没有其他机器人演示的 ROS 域。
 
 ## 运行
 
 以下命令从**作品目录 `靳喻宝-曾煜翔/`**执行：
 
 ```bash
-export BAJIE_URDF="$PWD/generated/bajie_robot.urdf"
+export BAJIE_URDF="$PWD/src/question2_project/generated/bajie_robot.urdf"
 set -o pipefail
 python3 src/question2_project/solve_q2.py --urdf "$BAJIE_URDF" \
   --input inputs/q2_demo_input.jsonl --output answers/q2_demo_output.jsonl 2>&1 | tee assets/q2_run.log

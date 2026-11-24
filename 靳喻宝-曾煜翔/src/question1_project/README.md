@@ -25,8 +25,8 @@
 以下命令都在**作品目录 `靳喻宝-曾煜翔/` 内**执行；仓库自带脚本会按脚本自身位置推算路径，整个目录放到任何机器、任何路径都能直接跑。推荐：
 
 ```bash
-bash run_q1.sh          # 无界面，只跑驱动节点
-bash run_q1.sh --gui    # 同时启动 RViz（需要图形桌面）
+bash src/question1_project/run_q1.sh          # 无界面，只跑驱动节点
+bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz（需要图形桌面）
 ```
 
 手动执行时等价于（同样在 `靳喻宝-曾煜翔/` 内）：

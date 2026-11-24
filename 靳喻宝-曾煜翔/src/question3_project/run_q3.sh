@@ -26,7 +26,7 @@ usage() {
 环境变量:
   ISAAC_PATH      Isaac Sim 4.5 安装根目录（含 python.sh 与 exts/），默认自动探测
   BAJIE_SIM_DIR   官方仿真资源根目录，默认 <作品目录>/src/bajie_sim
-  BAJIE_URDF      展开后的官方 URDF，默认 <作品目录>/generated/bajie_robot.urdf
+  BAJIE_URDF      展开后的官方 URDF，默认 <作品目录>/src/question2_project/generated/bajie_robot.urdf
   Q3_RESULT_DIR   结果目录（必须已存在），默认新建临时目录
   Q3_STRATEGY     adaptive（默认）| baseline | adaptive-fallback
   Q3_SKIP_CHECKS  1 时跳过内存与显存预检（不推荐）
@@ -55,10 +55,10 @@ strategy=${Q3_STRATEGY:-adaptive-fallback}
 
 # --- 作品内资源：默认值即提交目录，不依赖任何外部工作区 ---
 scene=${BAJIE_SIM_DIR:-$project/src/bajie_sim}
-urdf=${BAJIE_URDF:-$project/generated/bajie_robot.urdf}
+urdf=${BAJIE_URDF:-$project/src/question2_project/generated/bajie_robot.urdf}
 input=$project/inputs/q3_demo_input.jsonl
 scene=$(realpath -e "$scene" 2>/dev/null) || die "仿真资源目录不存在：${BAJIE_SIM_DIR:-$project/src/bajie_sim}"
-urdf=$(realpath -e "$urdf" 2>/dev/null) || die "URDF 不存在：${BAJIE_URDF:-$project/generated/bajie_robot.urdf}"
+urdf=$(realpath -e "$urdf" 2>/dev/null) || die "URDF 不存在：${BAJIE_URDF:-$project/src/question2_project/generated/bajie_robot.urdf}"
 [[ -f $scene/scene/abr_scene.usd ]] || die "缺少官方场景 $scene/scene/abr_scene.usd"
 [[ -d $scene/models ]] || die "缺少官方模型目录 $scene/models（只保留入口 USD 不可用）"
 [[ -f $input ]] || die "缺少输入 $input"

@@ -10,7 +10,7 @@ Q3 = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Q3))
 import touch
 
-URDF = Path(os.environ.get('BAJIE_URDF', Q3.parents[1] / 'generated/bajie_robot.urdf'))
+URDF = Path(os.environ.get('BAJIE_URDF', Q3.parents[1] / 'src/question2_project/generated/bajie_robot.urdf'))
 
 
 def box_points(lo, hi):

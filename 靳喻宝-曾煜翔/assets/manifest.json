@@ -1,6 +1,6 @@
 {
   "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
-  "generated_at_utc": "2026-11-24T05:54:07Z",
+  "generated_at_utc": "2026-11-24T09:04:37Z",
   "official_assets": {
     "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
       "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
@@ -109,8 +109,8 @@
       "sha256": "6c541bf20f81a5b5d95014d6f0c572569c8d27e7efe778721cffb6a70a191a57"
     },
     "video/README.md": {
-      "bytes": 1515,
-      "sha256": "4f428a09a8f8ae98ac71737b34a5a8de7c2b251b595d435cfa146be037c41a83"
+      "bytes": 1537,
+      "sha256": "b76436e104f601fdac2ec6e10cf846e5504bbc4fc713a944a60a15da3bc4281e"
     },
     "video/q1_rviz.mp4": {
       "bytes": 888772,
@@ -144,6 +144,10 @@
       "bytes": 9572,
       "sha256": "bfb854fa7f6857fe5610be8f8a273b8f80189c725b665b8784bf2f6d1e9335cc"
     },
+    "src/question1_project/check_delivery.py": {
+      "bytes": 14329,
+      "sha256": "06383e4e1d178e7f1d4f247d9868c071c9d50b6de2abd988fe8a6dd925ff6874"
+    },
     "src/question1_project/launch/q1_rviz.launch.py": {
       "bytes": 2145,
       "sha256": "940261a31bb3387695f79d3e59d46f31cb891c4183e6b17c54ac75ac54f7da4a"
@@ -156,6 +160,22 @@
       "bytes": 3865,
       "sha256": "6875b7ae13965a872d813d0bebcedcb069a581743b403707c1bd27795e86556c"
     },
+    "src/question1_project/check_env.sh": {
+      "bytes": 7699,
+      "sha256": "b368c62352a89f02f4854cc2acd218fc0107b8e968071ae17829e1ec202a7163"
+    },
+    "src/question1_project/run_all.sh": {
+      "bytes": 2524,
+      "sha256": "de3f9b5a6dbccdb4265dc687281ca8b06fd64e34366f3ee6a0275c4934592e23"
+    },
+    "src/question1_project/run_q1.sh": {
+      "bytes": 2661,
+      "sha256": "af974262805b90f503563344b85065d0b2836c821c87396f893f265a69fc168a"
+    },
+    "src/question1_project/run_tests.sh": {
+      "bytes": 2071,
+      "sha256": "4f6db19d77b752ffba23c7517df4b7f73a12f2c8ff2e5834c68719ab55b6748c"
+    },
     "src/question2_project/fk.py": {
       "bytes": 6906,
       "sha256": "40d0f4eb4f60979b54537d7329c918325d8cce8ab86093fb9beba561172c0861"
@@ -165,12 +185,16 @@
       "sha256": "2e95f7d7114b4ffb08a85fcc42ffe10461032e4b5d10956c52ea644c0915d375"
     },
     "src/question2_project/tests/test_q2.py": {
-      "bytes": 6812,
-      "sha256": "d6cb4613cb5bb6038ae641ffe5800a8b61652bb3459c11c0ea42fa4040b23042"
+      "bytes": 6801,
+      "sha256": "fa9548b972b67510183145d8ab7c419b02755b82771c5f67523e065f2916b7a4"
     },
     "src/question2_project/verify_tf.py": {
       "bytes": 7292,
       "sha256": "7206f19b6c0cfc9d19805d5d4c493d8534f1fa9520be4884029c77ec470de5b1"
+    },
+    "src/question2_project/run_q2.sh": {
+      "bytes": 2019,
+      "sha256": "b21cdddfc7d12be83c2ca7614c10ef60c0e54f5f04592ee43d409d070103a895"
     },
     "src/question3_project/bridge.py": {
       "bytes": 2492,
@@ -193,16 +217,16 @@
       "sha256": "7bc748cf06d882e217bb7861ad653dc6b925efb30e65c0ec8b9832ec1f3d76fb"
     },
     "src/question3_project/tests/test_adaptive_touch.py": {
-      "bytes": 14536,
-      "sha256": "bc585859cf7a5fc878c2a9b210b9efa0e0cd89d73549d0c7b93835b6ceba67df"
+      "bytes": 14558,
+      "sha256": "b0287bc3b7a9c9c654fc5d22c01bb9349538ddbe26ecf08fe2c8f850962edc54"
     },
     "src/question3_project/tests/test_clearance.py": {
-      "bytes": 2804,
-      "sha256": "0dd33d0306c33040a459a09e75511c4ea44894f95bbff1cdb304b6043de20bbd"
+      "bytes": 2826,
+      "sha256": "c7075ae4223a5e0bc7dd752bc3e19953bb1e1f3f73b5aaeceee8884835ea3a55"
     },
     "src/question3_project/tests/test_contact_hold.py": {
-      "bytes": 4477,
-      "sha256": "e4719b34396351e12f57ce85b10072966d66c9be9a6e79167f2f037ebf5bc148"
+      "bytes": 4499,
+      "sha256": "4ad75f07f3988aadff0473eb7a059faa96df06c24043aff79b5dbc4c39044716"
     },
     "src/question3_project/tests/test_journal.py": {
       "bytes": 4747,
@@ -221,18 +245,18 @@
       "sha256": "0569891277b52d1a891ca4cfcc34e78378a637b63e329ddadbad03d96f5691f1"
     },
     "src/question3_project/run_docker.sh": {
-      "bytes": 10780,
-      "sha256": "56058974d9e1e5b0915e0fceb3d8f0c93e234c5855be814d3049fb947d7c8a6a"
+      "bytes": 10824,
+      "sha256": "a96db188a86592a1d293267119388b78c9e9867dff64c6c1da56ede86c0ffa1d"
     },
     "src/question3_project/run_q3.sh": {
-      "bytes": 9521,
-      "sha256": "5502d85bda740a0b5c87cf0962a1ee9b5a32c6bb1f8eb4c9bc2fe70bdb1d7c54"
+      "bytes": 9587,
+      "sha256": "2540648e2d0e06aa7b9dbba7895d8317a6623a77ec4d53017aa68753f20ba769"
     },
     "src/question3_project/physics.kit": {
       "bytes": 363,
       "sha256": "333efb4432e424681ee4dfd0b28878c9187a37de1e3d73d1149099adbaa344b3"
     },
-    "generated/bajie_robot.urdf": {
+    "src/question2_project/generated/bajie_robot.urdf": {
       "bytes": 30527,
       "sha256": "f55d61e668c8f6d30d6792b7fdebac02884babe3b956d729763bf0a68b89046f"
     }
