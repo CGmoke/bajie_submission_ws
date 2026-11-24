@@ -263,7 +263,7 @@ docker build -f src/question3_project/Dockerfile -t bajie/sim:humble45 src/quest
 Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 ```
 
-原生路径需要 `export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>`（该目录须含 `python.sh` 与 `exts/`），首次无头启动建议同时 `export ACCEPT_EULA=Y PRIVACY_CONSENT=Y`。`--gui` 打开 Isaac Sim 原生窗口，需要可用的 `DISPLAY`；没有图形桌面时去掉 `--gui` 走无界面模式，接触判定与作答完全一致。启动器自动定位 Isaac Sim、`source` ROS 2 Humble、预检内存与显存，超时自动终止（单例 600 s、整轮 1800 s，可用 `Q3_TIMEOUT` 覆盖）。默认策略 `adaptive-fallback`，日志逐例标注实际生效的 `strategy=`。**预期完成标志**：末尾出现 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`，作答 3 行。实测整轮 77.8 s（着色器缓存已热）。
+原生路径需要 `export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>`（该目录须含 `python.sh` 与 `exts/`），首次无头启动建议同时 `export ACCEPT_EULA=Y PRIVACY_CONSENT=Y`。`--gui` 打开 Isaac Sim 原生窗口，需要可用的 `DISPLAY`；没有图形桌面时去掉 `--gui` 走无界面模式，接触判定与作答完全一致。启动器自动定位 Isaac Sim、`source` ROS 2 Humble、预检内存与显存，超时自动终止（单例 600 s、整轮 1800 s，可用 `Q3_TIMEOUT` 覆盖）。默认策略 `adaptive-fallback`，日志逐例标注实际生效的 `strategy=`。**预期完成标志**：末尾出现 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`，作答 3 行。实测整轮 151.0 s（GUI 模式，着色器缓存已热）。
 
 **验收与演示**：仿真里能看到三例各自的触碰过程，作答与运行记录对得上。本次提交的作答出自 `20261124T102429Z-1b639e` 这一次整轮运行（`exit=ok`、`written_rows=3`、`misses=[]`），run 目录里的 `run.json` 和 3 份 `contact-*.json` 就是同源证据，逐例对应关系见 `assets/q3_evidence_index.json`。三例作答的关节值与接触快照逐值一致，偏差 0.0 rad；从快照三方位姿反算出来的作答位姿，与文件相差不到 2e-15 m。该次整轮的结构化日志见 `assets/q3_logs/20261124T102429Z-1b639e/`（早期 docker 整轮终端日志另见 `assets/q3_docker_run.log`），Isaac Sim 触碰视频见 `video/q3_touch.mp4`。
 
@@ -287,19 +287,146 @@ Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 
 ## 六、复现步骤与材料
 
-1. 按第三节安装依赖，准备官方模型及仿真资源（本目录已随附，核对 3.1 的两个 SHA-256 即可）。
-2. 核对 `inputs/` 中的测例与正式题面一致（题目一 1 例 `q1_all_seed7`、题目二 1 例 `demo_zero`、题目三 3 例）。
-3. 按第四节各题的实际命令，在作品目录内运行程序：`bash src/question1_project/run_q1.sh --gui`、`bash src/question2_project/run_q2.sh --verify`、`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh --gui`。也可一条命令依次跑完：`bash src/question1_project/run_all.sh`（批量模式下题一、题三自动走无界面，适合无人值守；需要看演示时用上面带 `--gui` 的命令）。
-4. 逐个测例的实际作答写入 `answers/`（程序自行覆盖，题目三三例全通过才写）。
-5. 在 `assets/` 保存各题完整 `.log`（已随附），在 `video/` 提供题目一与题目三的演示视频（已随附）。
-6. 记录实际运行环境、测试条件与完成情况：环境见第三节，实测结果见第一节「实现状态」与第四节各题「验收与演示」，补充材料在 `docs/提交自查.md`。三题单元测试可一次跑完：`bash src/question1_project/run_tests.sh`（期望 58 项全过：5 + 8 + 45）。
+从克隆仓库开始，到三题各自写出作答为止，按顺序给命令。每步都写了预期输出；跑不出来就照着那行提示往下查。
 
-交付物自检：
+**第 0 步　确认前置**
+
+| 项 | 要求 | 怎么查 |
+|---|---|---|
+| 系统 | Ubuntu 22.04（题一、题二 24.04 也可；题三必须 Humble） | `lsb_release -ds` |
+| 内存 | 题一、题二不限；题三可用 ≥ 12,800 MiB | `free -m \| head -2` |
+| 显卡 | 题三：空闲显存 ≥ 6,000 MiB，驱动 535~580 | `nvidia-smi --query-gpu=driver_version,memory.free --format=csv,noheader` |
+| 磁盘 | 克隆约 1.2 GB，跑题三另留 ≥ 20 GB | `df -h . \| tail -1` |
+
+题一、题二不碰 GPU，没有显卡也能跑完；题三没到门槛会在启动前直接拒绝，不会跑到一半才失败。
+
+**第 1 步　克隆仓库**
 
 ```bash
-python3 src/question1_project/check_delivery.py                                   # 只读：结构、限位、四元数、视频体积、资源指纹
-python3 src/question1_project/check_delivery.py --manifest assets/manifest.json   # 另生成哈希清单（唯一写操作）
+git clone <仓库地址>
+cd <仓库名>/靳喻宝-曾煜翔
+ls
 ```
+
+预期列出 `README.md  src  inputs  answers  docs  assets  video` 七项。作品目录名是报名姓名，必须 `cd` 进去，后面所有命令都在这一层执行。
+
+拿到的是压缩包时，解压后同样 `cd` 进去，效果一样。
+
+**第 2 步　装依赖**
+
+```bash
+sudo apt update
+sudo apt install ros-humble-desktop python3-colcon-common-extensions \
+                 ros-humble-rmw-fastrtps-cpp python3-numpy python3-scipy
+```
+
+只装 `ros-humble-ros-base` 的话，题一的 `--gui` 还需要补 `ros-humble-rviz2`。
+
+题三走容器路径时，另装 Docker 与 NVIDIA Container Toolkit（`docker run --gpus all` 能出显卡即可），不必装 Isaac Sim。
+
+**第 3 步　环境自检**
+
+```bash
+bash src/question1_project/check_env.sh
+```
+
+预期：逐项打印 `[可用]` / `[缺失]`，缺失项后面直接给出安装命令；末尾核对两个官方资源指纹。全部可用时退出码 0。
+
+题三的内存、显存项在这一步可能报缺失，属正常——它不影响题一、题二。
+
+**第 4 步　构建**
+
+首次运行脚本会自动 `colcon build`。想先单独构建一次、把错误提前暴露：
+
+```bash
+source /opt/ros/humble/setup.bash
+colcon build --base-paths src/question1_project src/bajie_robot \
+  --packages-select bajie_robot bajie_tasks --cmake-args -DBUILD_TESTING=OFF
+source install/setup.bash
+```
+
+预期：`Summary: 2 packages finished`。生成的 `build/`、`install/`、`log/` 由 `.gitignore` 排除，不随仓库分发，也不影响作答。
+
+**第 5 步　跑题一**
+
+```bash
+bash src/question1_project/run_q1.sh          # 无界面，约 30 秒
+bash src/question1_project/run_q1.sh --gui    # 同时打开 RViz 看五个阶段
+```
+
+预期：终端五段各打印一行净空下界，末尾 `[q1] 完成：… 共 1 行`；`answers/q1_demo_output.jsonl` 1 行、5 个关键帧。
+
+`--gui` 需要可用的图形桌面；没有就留默认，作答内容一致。
+
+**第 6 步　跑题二**
+
+```bash
+bash src/question2_project/run_q2.sh            # 求解，5 秒内
+bash src/question2_project/run_q2.sh --verify   # 追加 TF2 独立复核
+```
+
+预期：`--verify` 时三组用例复核误差均小于 1e-15；`answers/q2_demo_output.jsonl` 1 行、两组位姿。
+
+题二的求解不需要 ROS，`--verify` 才启动 `robot_state_publisher`。
+
+**第 7 步　部署题三（两条路选一条）**
+
+原生 Isaac Sim 4.5：
+
+```bash
+export ISAAC_PATH=$HOME/.local/share/ov/pkg/isaac_sim-4.5.0   # 该目录须含 python.sh 与 exts/
+export ACCEPT_EULA=Y PRIVACY_CONSENT=Y
+bash src/question3_project/run_q3.sh --check                  # 只探测，不启动
+```
+
+容器（本机无需安装 Isaac Sim）：
+
+```bash
+docker build -f src/question3_project/Dockerfile -t bajie/sim:humble45 src/question3_project
+bash src/question3_project/run_docker.sh --check
+```
+
+预期：两种 `--check` 都会打印 Isaac 版本或镜像标签、ROS 来源、可用内存、空闲显存与资源路径。任一项不达标会直接说明不启动，不会进入仿真。
+
+**第 8 步　跑题三**
+
+```bash
+# 先跑单例，确认场景能起、机械臂能动（约 2~3 分钟，不写正式作答）
+bash src/question3_project/run_q3.sh --case rubik_cube
+
+# 再跑整轮三例，写正式作答
+Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh
+```
+
+容器路径把 `run_q3.sh` 换成 `src/question3_project/run_docker.sh`；要开窗口就在前面加 `Q3_GUI=1`。
+
+预期：末尾 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`；`answers/q3_demo_output.jsonl` 3 行。首轮冷启动要编译着色器，耗时比记录的 151.0 秒长不少。
+
+**第 9 步　校验产出**
+
+```bash
+python3 src/question1_project/check_delivery.py   # 10 项结构/限位/四元数/视频/指纹
+sha256sum answers/*.jsonl                        # 与第五节记录的哈希对照
+bash src/question1_project/run_tests.sh           # 58 项单测
+```
+
+预期：自检 10 项 OK / 0 FAIL；三个哈希与第五节一致（题三换机器会变，属正常，判据看 `outcome=contact`）；单测 58 项全过（5 + 8 + 45）。
+
+改过作答或日志之后，用 `python3 src/question1_project/check_delivery.py --manifest assets/manifest.json` 重生成哈希清单，这是整套脚本里唯一的写操作。
+
+想一条命令跑完三题：
+
+```bash
+bash src/question1_project/run_all.sh
+```
+
+批量模式题一、题三自动走无界面，适合无人值守；需要录演示时再单独跑带 `--gui` 的命令。
+
+**材料核对**
+
+`assets/` 里是三题完整终端日志与题三 7 次运行的结构化产物（`run.json`、`contact-<case>.json`、`events.jsonl`），`video/` 里是题一与题三的演示视频，`docs/` 里是提交自查与三题的解法说明。这些都已随仓库提供，复跑时会被覆盖同一路径，属正常。
+
+`inputs/` 的测例与正式题面一致：题一 1 例 `q1_all_seed7`、题二 1 例 `demo_zero`、题三 3 例。
 
 ### 6.1 作品视频要求
 
@@ -323,7 +450,7 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 
 ## 七、提交前自查
 
-- [X] 已填写作品信息、成员分工、功能与创新点及作品版本（前三项已完成；作品版本与仓库地址需建仓推送后回填，见第一节）。
+- [ ] 已填写作品信息、成员分工、功能与创新点及作品版本（作品版本 v1.0.0 已填；作品仓库地址需建仓推送后回填，见第一节）。
 - [ ] 已在 AtomGit 上重新创建独立作品仓库，并按飞书作品提交表要求登记仓库链接、作品信息及评审访问权限。
 - [X] 三道题的完整源码和必要配置均放入对应的 `src/` 目录。
 - [X] 已列明依赖版本、安装方法、各题执行目录及实际启动命令（第三、四节）。
