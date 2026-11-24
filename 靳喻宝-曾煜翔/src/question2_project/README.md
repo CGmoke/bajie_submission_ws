@@ -46,7 +46,7 @@ python3 src/question2_project/solve_q2.py --urdf "$BAJIE_URDF" \
   --input inputs/q2_demo_input.jsonl --output answers/q2_demo_output.jsonl 2>&1 | tee assets/q2_run.log
 ```
 
-脚本先计算完所有行再写文件：先写入输出目录下的临时目录，成功后 `replace`，因此解析或计算失败时不会覆盖已有作答，也不会留下半份答案；`--input` 与 `--output` 不能是同一文件。
+脚本先计算完所有行再写文件：先写入输出目录下的临时目录，成功后 `replace`。解析或计算失败不会覆盖已有作答，也不会留下半份答案；`--input` 与 `--output` 不能是同一文件。
 
 ### 输入格式
 

@@ -14,10 +14,10 @@
 | [`test/test_q1_clearance.py`](test/test_q1_clearance.py) | 预检回归测试：旧 seed 7 触地、机身间距、区间中间危险、0–127 种子全阶段          |
 | [`package.xml`](package.xml) / [`setup.py`](setup.py)   | 包元数据与入口点 `q1_drive = bajie_tasks.q1_drive:main`                        |
 | [`run_q1.sh`](run_q1.sh)                                 | 题目一入口：自动 source ROS 2、编译两个包并启动驱动节点                          |
-| [`run_all.sh`](run_all.sh)                               | 跨三题：环境自检 → 题一 → 题二 → 题三，逐题汇总退出状态                          |
+| [`run_all.sh`](run_all.sh)                               | 跨三题：环境自检 → 题一 → 题二 → 题三，逐题汇总退出状态                       |
 | [`run_tests.sh`](run_tests.sh)                           | 跨三题：一次跑完 58 项单元测试（5 + 8 + 45）                                     |
 | [`check_env.sh`](check_env.sh)                           | 跨三题：ROS / NumPy / SciPy / Isaac Sim / 显存 / 官方资源指纹自检                |
-| [`check_delivery.py`](check_delivery.py)                 | 跨三题：交付物自检，`--manifest` 时重生成 `assets/manifest.json`                 |
+| [`check_delivery.py`](check_delivery.py)                 | 跨三题：交付物自检，`--manifest` 时重生成 `assets/manifest.json`             |
 
 跨三题的四个脚本放在本目录，是因为题一目录是 colcon 构建的起点，也包含全仓单测；位置说明见作品 README 第二节。
 
@@ -32,8 +32,8 @@
 以下命令都在**作品目录 `靳喻宝-曾煜翔/` 内**执行；仓库自带脚本会按脚本自身位置推算路径，整个目录放到任何机器、任何路径都能直接跑。推荐：
 
 ```bash
-bash src/question1_project/run_q1.sh          # 无界面，只跑驱动节点
-bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz（需要图形桌面）
+bash src/question1_project/run_q1.sh --gui    # 启动 RViz 原生窗口，边跑边看（需要图形桌面）
+bash src/question1_project/run_q1.sh          # 去掉 --gui 即无界面模式：作答一致，只是看不到三维画面
 ```
 
 手动执行时等价于（同样在 `靳喻宝-曾煜翔/` 内）：
@@ -49,7 +49,7 @@ ros2 launch bajie_tasks q1_rviz.launch.py \
   output_file:="$PWD/answers/q1_demo_output.jsonl"
 ```
 
-无图形桌面时，把最后一条换成：
+无图形桌面时，把末条换成：
 
 ```bash
 ros2 run bajie_tasks q1_drive --ros-args \
@@ -89,7 +89,7 @@ ros2 run bajie_tasks q1_drive --ros-args \
  "final_joint_state":{"lift_joint":0.183626,"...":"..."}}
 ```
 
-`seed` 决定目标位姿：升降、头部、`joint1`–`joint6` 与夹爪开度各自在预设范围内用 `random.Random(seed)` 取值，因此同一 seed 可复现。机械臂目标整体朝前上方抬展，避免原始演示中较大的负向 `joint2` 把腕部压向地面。多行测例之间若上一例结束时不在零位，会先插入一段 `reset`，该段同样要经过预检。
+`seed` 决定目标位姿：升降、头部、`joint1`–`joint6` 与夹爪开度各自在预设范围内用 `random.Random(seed)` 取值。同一个 `seed` 换台机器还是这组值。机械臂目标整体朝前上方抬展，避免原始演示中较大的负向 `joint2` 把腕部压向地面。多行测例之间若上一例结束时不在零位，会先插入一段 `reset`，该段同样要经过预检。
 
 ## 净空预检原理
 
@@ -132,7 +132,7 @@ ros2 run tf2_tools view_frames             # 检查关节树无断链
 | `The root link base_footprint has an inertia` | KDL 不支持根连杆带惯量；仅解析提示，不影响 TF 与作答，不要为消除它修改官方 URDF                                |
 | `UnsafeMotion: ... 净空不足`                  | 该 seed 的目标姿态不可用；换 seed，或检查是否误改了 URDF 的 `origin`/几何                                    |
 | 写作答时报 `EACCES: permission denied`        | `answers/` 目录属主为 root；把它改回当前用户，见根目录说明                                                   |
-| 找不到 `inputs/...jsonl`                      | 参数用了相对路径，而启动目录不是 `靳喻宝-曾煜翔/`；改用绝对路径                                                 |
+| 找不到 `inputs/...jsonl`                      | 参数用了相对路径，而启动目录不是 `靳喻宝-曾煜翔/`；改用绝对路径                                              |
 
 ## 注意事项
 

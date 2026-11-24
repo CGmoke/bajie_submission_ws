@@ -1,6 +1,6 @@
 {
   "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
-  "generated_at_utc": "2026-11-24T09:04:37Z",
+  "generated_at_utc": "2026-11-24T09:19:23Z",
   "official_assets": {
     "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
       "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
@@ -137,8 +137,8 @@
       "sha256": "cfc9e03e1b948039201948d572342f7ea49a48b79e5af9ef19ed02adb330ee77"
     },
     "src/question1_project/bajie_tasks/q1_drive.py": {
-      "bytes": 10648,
-      "sha256": "84d2fd0b4b393a959f3243fb242138ff796c32ed1e7f74532f115108a9e4e5b8"
+      "bytes": 10083,
+      "sha256": "607a9cce5b714c561e71c8678915b08f712e739052c7933e5930e5755a8f4935"
     },
     "src/question1_project/bajie_tasks/q1_safety.py": {
       "bytes": 9572,
@@ -169,8 +169,8 @@
       "sha256": "de3f9b5a6dbccdb4265dc687281ca8b06fd64e34366f3ee6a0275c4934592e23"
     },
     "src/question1_project/run_q1.sh": {
-      "bytes": 2661,
-      "sha256": "af974262805b90f503563344b85065d0b2836c821c87396f893f265a69fc168a"
+      "bytes": 2687,
+      "sha256": "430fb8e4579a2d13181be527a1164ca019525b051dec369c003c54dff056c692"
     },
     "src/question1_project/run_tests.sh": {
       "bytes": 2071,

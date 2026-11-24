@@ -227,7 +227,7 @@ def execute_adaptive(initial, waypoints, dt, observe_step, wrist_settled=None):
                     break
             else:
                 raise TouchMiss('open wrist did not settle before closing')
-        speed = {'clear': .15, 'align': .45, 'open': .20, 'approach': .25, 'touch': .10}[waypoint.phase]
+        speed = {'clear': .30, 'align': .90, 'open': .30, 'approach': .30, 'touch': .10}[waypoint.phase]
         for positions in smooth_segment(previous, waypoint.positions, dt, speed):
             result = observe_step(positions, waypoint.phase)
             if result is not None:

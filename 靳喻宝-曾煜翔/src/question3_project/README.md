@@ -1,6 +1,6 @@
 # 题三 · Isaac Sim 玩具触碰
 
-在官方 Isaac Sim 场景中一次性连续执行三例假夹取：在上方转腕张开，保持张开接近目标，等手腕实际到位并停稳，再低速合指（恐龙与软玩具改为腕部垂直下压、不合指）。只有同一夹指连续 6 个仿真步既被 PhysX 报告为有效目标接触，又与玩具的**可见表面**相接，才记录最后一个验证步的实测姿态。不夹起玩具；记录后竖直抬起、确认脱离该玩具，就从当前实测位姿直接规划下一件玩具，全程不回到初始位姿。官方场景和模型不改动。
+在官方 Isaac Sim 场景中一次性连续执行三例假夹取：在上方转腕张开，保持张开接近目标，等手腕实际到位并停稳，再低速合指（恐龙与软玩具改为腕部垂直下压、不合指）。只有同一夹指连续 6 个仿真步既被 PhysX 报告为有效目标接触，又与玩具的**可见表面**相接，才把末个验证步的实测姿态记下来。不夹起玩具；记录后竖直抬起、确认脱离该玩具，就从当前实测位姿直接规划下一件玩具，全程不回到初始位姿。官方场景和模型不改动。
 
 `answers/q3_demo_output.jsonl` 是**连续接触判定加入之前的实测产物**：在容器 `bajie/sim:humble45` 中整轮跑出，三例均取得 PhysX 目标接触且与可见表面相接，完整终端日志见 [`assets/q3_docker_run.log`](../../assets/q3_docker_run.log)。
 
@@ -77,8 +77,10 @@ Q3_RESULT_DIR="$PWD/answers" \
 export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>
 out=$(mktemp -d /tmp/bajie-q3-verified.XXXXXX)
 Q3_RESULT_DIR="$out" \
-  bash src/question3_project/run_q3.sh 2>&1 | tee "$out/run.log"
+  bash src/question3_project/run_q3.sh --gui 2>&1 | tee "$out/run.log"
 ```
+
+`--gui` 打开 Isaac Sim 原生窗口，需要可用的 `DISPLAY`；没有图形桌面时去掉 `--gui`，接触判定与作答完全一致。
 
 作品目录内资源为 `$PWD/src/bajie_sim` 与 `$PWD/src/question2_project/generated/bajie_robot.urdf`；输出目录独立于正式提交目录，也可不设 `Q3_RESULT_DIR`，启动器会创建并打印临时输出目录。
 
@@ -100,7 +102,7 @@ Q3_RESULT_DIR="$out" \
 
 ```bash
 bash src/question3_project/run_docker.sh --case rubik_cube
-# 可选：dinosaur、soft_toy；原生环境换成 run_q3.sh --case rubik_cube
+# 可选：dinosaur、soft_toy；原生环境换成 run_q3.sh --gui --case rubik_cube
 ```
 
 ### 资源保护与自动终止
@@ -132,8 +134,8 @@ bash src/question3_project/run_docker.sh --case rubik_cube
 ### 按玩具选择合拢姿态
 
 - **魔方**：合拢方向对准一条侧面法线，让夹指从侧面贴近。
-- **恐龙**：优先用 `dinosaur_press`——腕部垂直下压、**不合指**，接触由下降产生。恐龙侧脸近乎垂直，贴着侧面合指会沿闭合圆弧横向扫掠，把玩具推走（实测 2.14 mm）。垂直下压的位移沿支撑方向，只推 0.82 mm。
-- **软玩具**：与恐龙同样优先用 `soft_toy_press`——腕部垂直下压、**不合指**，接触由下降产生，玩具会被轻微碰到动一下；下压不可达时再回退 `soft_upper` / `surface_close`（斜贴外露边缘，让一侧指垫先碰到）。
+- **恐龙**：优先用 `dinosaur_press`：腕部垂直下压、**不合指**，接触由下降产生。恐龙侧脸近乎垂直，贴着侧面合指会沿闭合圆弧横向扫掠，把玩具推走（实测 2.14 mm）。垂直下压的位移沿支撑方向，只推 0.82 mm。
+- **软玩具**：与恐龙同样优先用 `soft_toy_press`，腕部垂直下压、**不合指**，接触由下降产生，玩具会被轻微碰到动一下；下压不可达时再回退 `soft_upper` / `surface_close`（斜贴外露边缘，让一侧指垫先碰到）。
 
 用 `outcome=contact phase=touch visible_surface=touch` 和 `stable_contact_frames=6` 核对触碰，用 `clearance=released` 核对下一例前的脱离。整轮的验收是三组结果按输入顺序出现，且独立目录中写出三行作答。题面没有公开可据此计算最高分的细则；优先确认每例的真实触碰，不用回退结果凑齐新动作成功率。
 
@@ -198,7 +200,7 @@ python3 -m unittest discover -s src/question3_project/tests -v
 
 恐龙的侧脸近乎垂直。贴着侧面合指时，指尖沿闭合圆弧扫掠，结果只有两种：要么擦过表面（停在可见表面外 0.003 mm，判成正间隙假阴性），要么把玩具横向推走（实测 2.14 mm，触发 2 mm 保护）。把预压从 2 mm 减到 1 mm 也没有改善（位移仍有 2.005 mm），说明**姿态才是关键，预压量不是**。
 
-因此引入 `dinosaur_press` 候选：腕部朝下、指尖正对目标点，**全程不合指**（开合角保持不变），接触完全由竖直下降产生，最后一段下降放在 `touch` 相位以便允许接触。实测位移 0.823 mm，远低于 2 mm 保护线。同一环境三种姿态对比：
+于是加了一路 `dinosaur_press` 候选：腕部朝下、指尖正对目标点，**全程不合指**（开合角保持不变），接触完全由竖直下降产生，最后一段下降放在 `touch` 相位以便允许接触。实测位移 0.823 mm，远低于 2 mm 保护线。同一环境三种姿态对比：
 
 | 方案                                    | 接触         | 玩具位移                         | 说明                             |
 | --------------------------------------- | ------------ | -------------------------------- | -------------------------------- |

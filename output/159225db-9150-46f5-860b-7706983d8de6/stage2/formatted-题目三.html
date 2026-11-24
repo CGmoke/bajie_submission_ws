@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="docx-page-size" content="A4">
+  <title>题目三 · 在 Isaac Sim 中触碰玩具</title>
+  <style>
+  @page {
+    @bottom-center { content: counter(page); }
+  }
+  @page cover {
+    @bottom-center { content: none; }
+  }
+  section[role="cover"] { page: cover; }
+
+  :root {
+    --typography-fontFamily-heading: 微软雅黑, Microsoft YaHei, PingFang SC;
+    --typography-fontFamily-body: 微软雅黑, Microsoft YaHei, PingFang SC;
+    --typography-fontFamily-bodyLatin: Calibri, Helvetica Neue, sans-serif;
+    --typography-fontFamily-data: DIN Next, Arial, sans-serif;
+    --typography-fontFamily-code: Consolas, Source Code Pro, monospace;
+    --typography-fontSize-title: 28pt;
+    --typography-fontSize-subtitle: 18pt;
+    --typography-fontSize-h1: 20pt;
+    --typography-fontSize-coverTitle: 22pt;
+    --typography-fontSize-coverCategory: 14pt;
+    --typography-fontSize-sectionHeader: 13pt;
+    --typography-fontSize-h2: 11pt;
+    --typography-fontSize-h3: 10pt;
+    --typography-fontSize-body: 9pt;
+    --typography-fontSize-small: 8pt;
+    --typography-fontSize-tiny: 7pt;
+    --typography-fontSize-caption: 9pt;
+    --typography-fontSize-dataLabel: 10pt;
+    --typography-lineHeight-title: 1.3;
+    --typography-lineHeight-body: 1.6;
+    --typography-lineHeight-compact: 1.2;
+    --typography-fontWeight-heading: 600;
+    --typography-fontWeight-body: 400;
+    --typography-fontWeight-emphasis: 500;
+    --color-primary: #1565C0;
+    --color-secondary: #0288D1;
+    --color-accent: #00897B;
+    --color-text: #212121;
+    --color-textSecondary: #616161;
+    --color-heading: #1A237E;
+    --color-divider: #E0E0E0;
+    --color-background: #FFFFFF;
+    --color-surface: #F5F7FA;
+    --color-dataViz-series1: #1565C0;
+    --color-dataViz-series2: #00897B;
+    --color-dataViz-series3: #F9A825;
+    --color-dataViz-series4: #E53935;
+    --color-dataViz-series5: #7B1FA2;
+    --color-dataViz-series6: #0288D1;
+    --spacing-paragraph: 0.75em;
+    --spacing-paragraphAfter: 0.75em;
+    --spacing-indent: 0em;
+    --spacing-sectionGap: 2.5em;
+    --spacing-cardPadding: 1.5em;
+    --layout-marginTop: 2.5cm;
+    --layout-marginBottom: 2.0cm;
+    --layout-marginLeft: 2.5cm;
+    --layout-marginRight: 2.5cm;
+    --layout-pageSize: A4;
+    --layout-maxContentWidth: 160mm;
+    --fs-h1: var(--typography-fontSize-h1, 20pt);
+    --fs-h2: var(--typography-fontSize-h2, 16pt);
+    --fs-h3: var(--typography-fontSize-h3, 13pt);
+    --fs-body: var(--typography-fontSize-body, 11pt);
+    --fs-small: var(--typography-fontSize-small, 9pt);
+    --ff-heading: var(--typography-fontFamily-heading, "Microsoft YaHei");
+    --ff-body: var(--typography-fontFamily-body, "Microsoft YaHei");
+    --lh-body: var(--typography-lineHeight-body, 1.7);
+    --color-primary: var(--color-primary, #1a4f8b);
+    --color-text: var(--color-text, #1a1a1a);
+    --color-muted: var(--color-muted, #5b6470);
+    --color-border: var(--color-border, #c9d2dd);
+    --color-highlight: var(--color-highlight, #f3f6fa);
+    --spacing-paragraph: 0.6em;
+    --spacing-section: 1.6em;
+    --spacing-block: 0.9em;
+    --margin-page: 2.4cm;
+    --page-content-width: 15.6cm;
+    --ff-code: Consolas, "Courier New", monospace;
+    --fs-code: 0.94em;
+    --sp-list-margin: 0 0 var(--spacing-block) 1.4em;
+    --sp-list-padding: 1.1em;
+    --sp-li-bottom: 0.35em;
+    --sp-code-padding: 0 2px;
+    --sp-eyebrow-bottom: 0.8em;
+    --sp-title-bottom: 0.4em;
+    --sp-subtitle-bottom: 1.2em;
+    --sp-toc-li-bottom: 0.25em;
+    --sp-summary-padding: 0.9em;
+    --sp-cell-padding: 0.4em 0.55em;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--ff-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--color-text); margin: 0 auto; max-width: var(--page-content-width);
+  }
+  h2 { font-family: var(--ff-heading); font-size: var(--fs-h2); font-weight: 700;
+        color: var(--color-primary); margin: var(--spacing-section) 0 var(--spacing-paragraph) 0; }
+  h3 { font-family: var(--ff-heading); font-size: var(--fs-h3); font-weight: 700;
+        margin: var(--spacing-block) 0 var(--spacing-paragraph) 0; }
+  p { margin: 0 0 var(--spacing-paragraph) 0; text-align: justify; }
+  ul, ol { margin: var(--sp-list-margin); padding-left: var(--sp-list-padding); }
+  li { margin-bottom: var(--sp-li-bottom); }
+  code { font-family: var(--ff-code); font-size: var(--fs-code);
+          background: var(--color-highlight); padding: var(--sp-code-padding); }
+
+  .report-cover { padding: var(--margin-page) 0 var(--spacing-section) 0; border-bottom: 2px solid var(--color-primary); }
+  .cover-category { font-family: var(--ff-heading); font-size: var(--fs-small); font-weight: 700;
+                     color: var(--color-primary); letter-spacing: 0.08em; margin-bottom: var(--sp-eyebrow-bottom); }
+  .cover-title { font-family: var(--ff-heading); font-size: var(--fs-h1); font-weight: 700;
+                  color: var(--color-primary); margin: 0 0 var(--sp-title-bottom) 0; line-height: 1.35; }
+  .cover-subtitle { font-size: var(--fs-h3); color: var(--color-muted); margin-bottom: var(--sp-subtitle-bottom); }
+  .cover-meta { font-size: var(--fs-small); color: var(--color-muted); }
+
+  .doc-toc { padding: var(--spacing-block) 0; border-bottom: 1px solid var(--color-border); margin-bottom: var(--spacing-section); }
+  .toc-title { font-family: var(--ff-heading); font-weight: 700; margin-bottom: var(--sp-title-bottom); }
+  .toc-list { list-style: none; margin: 0; padding-left: 0; }
+  .toc-list li { margin-bottom: var(--sp-toc-li-bottom); }
+  .toc-list a { color: var(--color-primary); text-decoration: none; }
+
+  .executive-summary { background: var(--color-highlight); padding: var(--spacing-block) var(--sp-summary-padding);
+                        border-left: 4px solid var(--color-primary); margin-bottom: var(--spacing-section); }
+  .executive-summary h2 { margin-top: 0; }
+
+  table.data-table { width: 100%; border-collapse: collapse; margin: 0 0 var(--spacing-block) 0; font-size: var(--fs-small); }
+  table.data-table th, table.data-table td { border: 1px solid var(--color-border); padding: var(--sp-cell-padding); text-align: left; vertical-align: top; }
+  table.data-table th { background: var(--color-highlight); font-family: var(--ff-heading); font-weight: 700; }
+  table.kv td:first-child { width: 30%; color: var(--color-muted); }
+  .appendix { border-top: 1px solid var(--color-border); margin-top: var(--spacing-section); padding-top: var(--spacing-block); }
+  .appendix p { font-size: var(--fs-small); color: var(--color-muted); }
+  </style>
+</head>
+<body>
+  <section role="cover" class="report-cover">
+    <p class="cover-category">八界杯创新挑战赛 · 初赛作品说明（题目三）</p>
+    <h1 class="cover-title">题目三 · 在 Isaac Sim 中触碰玩具</h1>
+    <p class="cover-subtitle">解题思路与创新点</p>
+    <div class="cover-meta"><p>作品：靳喻宝-曾煜翔 ｜ 2026-11-24 ｜ 作答：answers/q3_demo_output.jsonl</p></div>
+  </section>
+
+  <section role="body" data-page-restart="1">
+    <nav class="doc-toc">
+      <p class="toc-title">目录</p>
+      <ol class="toc-list"><li><a href="#sec1">一、题目概览</a></li><li><a href="#sec2">二、题面要求与本作品的对应实现</a></li><li><a href="#sec3">三、解题思路</a></li><li><a href="#sec4">四、创新点</a></li><li><a href="#sec5">五、验证结果</a></li><li><a href="#sec6">六、局限与改进方向</a></li></ol>
+    </nav>
+
+    <div class="executive-summary">
+      <h2>执行摘要</h2>
+      <p>本题把「证明它真的碰到了」当作核心目标：判定同时要求 PhysX 报告的非正分离接触与夹指落在玩具可见网格上，并连续 6 个仿真步成立，再用玩具位移上限排除「推倒」；三件玩具按形态分别采用侧向贴合与腕部垂直下压两类手法。三例在同一仿真会话中连续完成、逐例确认脱离后续接，整轮 77.8 s 取得 3/3 真实接触，每一次触碰都落成 run.json 与 contact-&lt;case&gt;.json，作答的每一行都能回查到具体帧。</p>
+      <table class="data-table kv"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>题号</td><td>题目三 · 在 Isaac Sim 中触碰玩具</td></tr><tr><td>源码目录</td><td>src/question3_project/</td></tr><tr><td>输入</td><td>inputs/q3_demo_input.jsonl（touch_toy_1/2/3）</td></tr><tr><td>作答</td><td>answers/q3_demo_output.jsonl：3 行</td></tr><tr><td>实测</td><td>3/3 contact，77.8 s；作答 SHA-256 4a404ccd…1a1916dd</td></tr></tbody></table>
+    </div>
+
+    <main>
+<h2 id="sec1">一、题目概览</h2>
+<p>本题要求在 Isaac Sim 4.5 中打开官方场景、配置 ROS 2 Bridge，读取底盘与三件玩具（魔方、恐龙、软玩具）的世界位姿，为每个测例独立规划并控制机械臂完成<strong>真实物理接触</strong>，最后报告接触时的十关节状态与两部位姿。</p>
+<table class="data-table"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>题号</td><td>题目三</td></tr><tr><td>题目名称</td><td>在 Isaac Sim 中触碰玩具</td></tr><tr><td>源码目录</td><td><code>src/question3_project/</code>（<code>run_touch.py</code> 主程序 + <code>touch.py</code> 规划与判定 + <code>bridge.py</code> ROS 2 桥接 + 启动器与容器）</td></tr><tr><td>输入</td><td><code>inputs/q3_demo_input.jsonl</code>，3 个测例：<code>touch_toy_1/2/3</code></td></tr><tr><td>作答</td><td><code>answers/q3_demo_output.jsonl</code>，3 行</td></tr><tr><td>演示</td><td><code>video/q3_touch.mp4</code>（Isaac Sim 实录，3 min 35 s）</td></tr></tbody></table>
+<h2 id="sec2">二、题面要求与本作品的对应实现</h2>
+<table class="data-table"><thead><tr><th>题面要求</th><th>本作品的实现</th></tr></thead><tbody><tr><td>在 Isaac Sim 4.5 中打开官方场景并配置 ROS 2 Bridge</td><td>只打开一次 <code>scene/abr_scene.usd</code>，既有 OmniGraph 置为 inactive，仅保留本题自建的桥接图；CPU PhysX、60 Hz 固定步长</td></tr><tr><td>读取底盘与目标玩具世界位姿，转换到规划坐标系</td><td>底盘按 <code>base_footprint_in_world</code> 摆位并用内存中的 <code>FixedJoint</code> 锚定；规划在底盘系进行：<code>T_base^toy = (T_world^base)^-1 · T_world^toy</code></td></tr><tr><td>每个测例从指定初始关节状态开始，独立规划并完成触碰</td><td>每例都从输入的初始关节状态起步、独立生成路点；触碰后不归位，直接从实测位姿续接下一例</td></tr><tr><td>说明目标位姿处理、运动规划、控制与触碰判定的方法</td><td>见 3.2 的四小节</td></tr><tr><td>输出 <code>final_joint_state</code>、夹爪相对底盘位姿、玩具在 <code>objects_link</code> 中的位姿</td><td>三字段齐备，三例全部通过后才原子替换作答文件</td></tr></tbody></table>
+<h2 id="sec3">三、解题思路</h2>
+<p>本节先给出分层设计，再逐项说明目标位姿处理、规划、控制与触碰判定，最后交代「三例共用一个场景会话」这个取舍的代价与应对。</p>
+<h3>3.1 总体设计</h3>
+<p>本题的难点不在「让机械臂动起来」，而在「证明它真的碰到了」。因此整条链路围绕两个目标设计：<strong>接触必须真实</strong>、<strong>结论必须可回溯</strong>。</p>
+<ol><li><strong>场景层</strong>：一次开场景，关掉所有既有 OmniGraph，只保留本题的桥接图；底盘用 <code>FixedJoint</code> 锚定，保证后续计算所依据的 <code>base_footprint</code> 不变。</li><li><strong>规划层</strong>：在底盘系里算目标，用增量 IK 求十关节目标，再采样成 18 个路点；张开接近、由上而下靠近目标。</li><li><strong>控制层</strong>：路点逐条下发；手腕实测位置与速度连续四步达标后才允许合指，合指期间腕部目标冻结。</li><li><strong>判定层</strong>：同一根夹指连续 6 个仿真步同时满足「非正分离接触」与「可见表面相接」才算触碰成功；记录接触瞬间的实测值。</li><li><strong>证据层</strong>：把 <code>run.json</code>、<code>contact-&lt;case&gt;.json</code>、<code>events.jsonl</code> 三类产物落在同一 run 目录下，作答与之同源。</li></ol>
+<h3>3.2 关键环节</h3>
+<p><strong>（1）目标位姿处理。</strong> 输入给的是世界位姿，而规划要用底盘系。先求底盘在世界中的变换（含 yaw 180° 的朝向），再左乘其逆得到玩具在底盘系的位姿；过程中同时保留夹爪在世界系中的位姿，用于最后把玩具位姿转换到 <code>objects_link</code> 系输出。</p>
+<p><strong>（2）运动规划。</strong> 以当前实测关节位姿为起点，用 <code>scipy.optimize.least_squares</code> 做增量 IK，把关节空间解按 smoothstep 采样成 18 个路点，并在规划阶段就校验关节限位与速度；接近姿态让两指保持张开、由上而下贴近目标表面。</p>
+<p><strong>（3）控制。</strong> 每条路点下发后等待实测到位；手腕的位置与速度连续四个仿真步稳定后才允许合指——这一条是为了避免「腕还在走就合指」导致的假接触：腕部未停稳时，指尖位姿与规划不符，接触点会落在意料之外的位置。</p>
+<p><strong>（4）触碰判定（双判据）。</strong> 判定同时要求：</p>
+<ul><li><strong>物理判据</strong>：PhysX 报告同一夹指与目标玩具之间存在带冲量的<strong>非正分离</strong>接触；</li><li><strong>几何判据</strong>：该夹指的接触点落在玩具的<strong>可见网格</strong>上（<code>visible_surface=touch</code>），而不是只碰到碰撞外壳。</li></ul>
+<p>两者连续 6 个仿真步同时成立才记录。首次满足时先保持当前指令；连续 6 步无有效接触才沿原方向微调，合指每次 0.003 rad、下探每次 0.25 mm，最多 4 次。合指类动作的玩具位移上限 2 mm，垂直下压类是有意轻碰，上限放宽到 6 mm。出现非目标碰撞立即中止。</p>
+<p><strong>（5）按玩具形态选姿态。</strong> 三件玩具的几何差异很大，用一套参数必然有一例失败：</p>
+<table class="data-table"><thead><tr><th>测例</th><th>策略</th><th>手法</th></tr></thead><tbody><tr><td><code>touch_toy_1</code>（魔方）</td><td><code>cube_side</code></td><td>合拢方向对准一条侧面法线，从侧面贴合</td></tr><tr><td><code>touch_toy_2</code>（恐龙）</td><td><code>dinosaur_press</code></td><td>腕部垂直下压、<strong>全程不合指</strong>，接触由下降产生</td></tr><tr><td><code>touch_toy_3</code>（软玩具）</td><td><code>soft_toy_press</code></td><td>同垂直下压；不可达时回退斜贴边缘</td></tr></tbody></table>
+<p>恐龙这一例最能说明问题：它侧脸近乎垂直，贴侧面合指时指尖沿闭合圆弧横向扫掠，会把玩具推走（实测位移超过 2 mm 的合指保护阈值，被判为「推倒」而非「触碰」）。改成垂直下压后，位移沿支撑方向，只需 0.8 mm 量级即可产生接触。</p>
+<p><strong>（6）脱离与链式续接。</strong> 记录接触后不做归位：沿当前腕姿竖直抬起最多 8 cm，直到连续 4 帧不再接触该玩具，再以同一实测十关节位姿为起点规划下一件——先竖直抬到悬停高度再横向对齐。因此三例动作是连续的，最后一例停在接触位姿。</p>
+<h3>3.3 关键取舍：为什么三例共用一个场景会话</h3>
+<p>每例重开场景是最简单的写法，但代价是每次都要重新加载 1.1 GB 资源、重建桥接、重新等 PhysX 稳定，三例累计要几分钟。这里选择「一次开会话、三例连续执行」，代价是需要自己维护「脱离」逻辑：如果上一例还贴着玩具就去够下一件，会拖拽甚至推倒它。</p>
+<p>为此把「抬升脱离」做成显式的成功条件——抬到连续 4 帧不再接触，确认后才允许规划下一例；脱离失败则整轮中止，不写部分作答。宁可少一个答案，也不留一个来源不明的接触。</p>
+<h2 id="sec4">四、创新点</h2>
+<p>四条创新点分别解决「判得准、打得中、追得回、接得顺」，每条都指明它挡住了哪一类失败。</p>
+<h3>创新点一：双判据确认接触，把「擦过」和「推倒」都排除</h3>
+<p><strong>做法</strong>：要求「非正分离接触 + 可见表面相接」连续 6 个仿真步同时成立；同时给玩具位移设上限（合指 2 mm、下压 6 mm）。</p>
+<p><strong>为什么更好</strong>：单看物理接触，擦着碰撞外壳过去也会被判成功；单看位移，推倒玩具也算「碰到了」。两条判据分别从「接触质量」与「接触后果」两个方向收紧，中间那块「贴着外壳蹭过」「把玩具顶飞」的假阳性就被挤掉了。</p>
+<p><strong>证据</strong>：本次作答对应的整轮运行中，三例的接触分离距离分别为 −0.353 mm、−0.495 mm、−0.005 mm，全部为非正值（PhysX 已判定真实接触）；玩具最大位移 0.15~1.61 mm，均在阈值内。</p>
+<h3>创新点二：按玩具形态选姿态，而不是一套参数打天下</h3>
+<p><strong>做法</strong>：为魔方、恐龙、软玩具分别配置接触策略，并在日志中逐例标注实际生效的 <code>strategy=</code>。</p>
+<p><strong>为什么更好</strong>：这三件玩具的失败模式完全不同——魔方是平面，适合侧向贴合；恐龙侧脸近乎垂直，侧向合指会把玩具扫走；软玩具形状不规则，需要留出回退路径。用同一套动作参数，最好情况是三例里两例通过。</p>
+<p><strong>证据</strong>：恐龙由「斜贴侧脸、指尖停在可见表面之外（亚毫米级）擦过」改为垂直下压后一次通过；三例在同一轮运行中均为 <code>outcome=contact</code>、<code>visible_surface=touch</code>。</p>
+<h3>创新点三：作答与运行证据同源，每一行都能回查到具体帧</h3>
+<p><strong>做法</strong>：每次运行生成三类结构化产物——<code>run.json</code>（整轮汇总：三例 outcome、策略、耗时、写入行数、退出状态）、<code>contact-&lt;case&gt;.json</code>（接触瞬间的十关节实测值、base/hand/toy 三方位姿、接触刚体对与间隙）、<code>events.jsonl</code>（事件流）；另有 <code>assets/q3_evidence_index.json</code> 记录作答行与接触快照的对应关系。</p>
+<p><strong>为什么更好</strong>：物理仿真的结果是「一次性的」，只留一行 JSON 等于把过程丢掉了。评审若质疑某一行作答，可以直接在 <code>contact-*.json</code> 里找到同一时刻的十关节实测值；也可以反过来，从快照的三方位姿反算出作答里的两组位姿。这是「可复核」，而不是「请相信我」。</p>
+<p><strong>证据</strong>：三例作答的 <code>final_joint_state</code> 与对应接触快照逐值一致（偏差 0.0 rad）；由快照三方位姿反算得到的作答位姿，与作答文件相差 &lt; 1e-15 m。</p>
+<h3>创新点四：三例连续执行不归位，把「脱离」变成显式条件</h3>
+<p><strong>做法</strong>：接触后沿腕姿竖直抬起，连续 4 帧不再接触才允许规划下一件；最后一例停在接触位姿。</p>
+<p><strong>为什么更好</strong>：连续动作更接近真实作业，也省掉两次场景重载；但连续的前提是「确实脱离了」。把脱离做成可判定的条件而不是「抬一下就好」，避免带着上一件玩具去够下一件——那种失败在日志里表现为非目标接触，很难在事后区分。</p>
+<p><strong>证据</strong>：整轮 77.8 s 完成三例（同会话、含两次脱离），<code>run.json</code> 记 <code>exit=ok</code>、<code>written_rows=3</code>、<code>misses=[]</code>。</p>
+<h2 id="sec5">五、验证结果</h2>
+<table class="data-table"><thead><tr><th>验证项</th><th>结果</th></tr></thead><tbody><tr><td>三例 outcome</td><td><code>touch_toy_1/2/3</code> 全部 <code>contact</code>，<code>visible_surface=touch</code></td></tr><tr><td>接触刚体对</td><td><code>gripper_right_link</code> ↔ <code>Rubik</code> / <code>toy_yellow_dragon</code> / <code>spiderman_grasp</code></td></tr><tr><td>分离距离</td><td>−0.353 / −0.495 / −0.005 mm（非正，PhysX 判定真实接触）</td></tr><tr><td>稳定接触帧数</td><td>三例均为 6 帧</td></tr><tr><td>整轮耗时与状态</td><td>77.758 s，<code>exit=ok</code>、<code>written_rows=3</code>、<code>misses=[]</code></td></tr><tr><td>作答与证据一致性</td><td>关节值偏差 0.0 rad；由快照反算的位姿与作答相差 &lt; 1e-15 m</td></tr><tr><td>作答可复现性</td><td>SHA-256 <code>4a404ccd…1a1916dd</code>（同机同版本逐字节一致）</td></tr><tr><td>演示视频</td><td><code>video/q3_touch.mp4</code>，832×544 / 25 fps / H.264+AAC，24,364,079 字节</td></tr></tbody></table>
+<h2 id="sec6">六、局限与改进方向</h2>
+<ul><li>依赖物理接触，跨机器、跨驱动版本不承诺逐字节一致；验收以 <code>outcome=contact</code> / <code>visible_surface=touch</code> 为准。更换 GPU 或驱动后建议先跑单例确认。</li><li>三件玩具的姿态是「按形态预设 + 有限微调」，换一批形状差异更大的物体时，策略表需要扩充；更通用的做法是由点云/网格自动估计接触面法线。</li><li>判定阈值（6 帧、2 mm / 6 mm、8 cm 抬升）来自本轮实测调参，对更软或更轻的物体可能偏严，需要按物体材质重新标定。</li><li>运行门槛较高（可用内存 ≥ 12,800 MiB、空闲显存 ≥ 6,000 MiB、驱动 535~580），低配机器需跳过预检或改用容器路径。</li></ul>
+    </main>
+
+    <div class="appendix">
+      <p>本文档为「八界杯创新挑战赛」初赛作品说明之一，与另外两份题目说明配套使用；文中数值、哈希与日志均可在作品目录内复核。</p>
+    </div>
+  </section>
+</body>
+</html>

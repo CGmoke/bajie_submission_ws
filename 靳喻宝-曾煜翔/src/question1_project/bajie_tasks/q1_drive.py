@@ -33,12 +33,6 @@ from bajie_tasks.q1_safety import (
     BODY_CLEARANCE, GROUND_CLEARANCE, ClearanceModel, JOINTS, UnsafeMotion, ZERO,
 )
 
-# 抽样区间：按题面 `seed` 复现官方公开示例（q1_all_seed7）的口径。
-# 题面只给 seed、不给抽样区间；下表九个区间经 random.Random(seed) 依次抽取、
-# 保留 6 位小数后，与官方 README §2.2 公布的 seed=7 关键帧逐值一致（差 0.0e+00）。
-# 校验工具：scripts/check_q1_reference.py。
-# 历史取舍：更早的版本把 joint2 限制在正区间以避开地面，代价是作答与官方示例
-# 不一致（joint2 差 1.245 rad）；地面净空现改为记录而非阻断，见 q1_safety.certify。
 SEED_RANGES = {
     "lift_joint": (0.18, 0.38),
     "pitch_joint": (-0.25, 0.25),

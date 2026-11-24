@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="docx-page-size" content="A4">
+  <title>题目一 · 关节分步驱动与 RViz 展示</title>
+  <style>
+  @page {
+    @bottom-center { content: counter(page); }
+  }
+  @page cover {
+    @bottom-center { content: none; }
+  }
+  section[role="cover"] { page: cover; }
+
+  :root {
+    --typography-fontFamily-heading: 微软雅黑, Microsoft YaHei, PingFang SC;
+    --typography-fontFamily-body: 微软雅黑, Microsoft YaHei, PingFang SC;
+    --typography-fontFamily-bodyLatin: Calibri, Helvetica Neue, sans-serif;
+    --typography-fontFamily-data: DIN Next, Arial, sans-serif;
+    --typography-fontFamily-code: Consolas, Source Code Pro, monospace;
+    --typography-fontSize-title: 28pt;
+    --typography-fontSize-subtitle: 18pt;
+    --typography-fontSize-h1: 20pt;
+    --typography-fontSize-coverTitle: 22pt;
+    --typography-fontSize-coverCategory: 14pt;
+    --typography-fontSize-sectionHeader: 13pt;
+    --typography-fontSize-h2: 11pt;
+    --typography-fontSize-h3: 10pt;
+    --typography-fontSize-body: 9pt;
+    --typography-fontSize-small: 8pt;
+    --typography-fontSize-tiny: 7pt;
+    --typography-fontSize-caption: 9pt;
+    --typography-fontSize-dataLabel: 10pt;
+    --typography-lineHeight-title: 1.3;
+    --typography-lineHeight-body: 1.6;
+    --typography-lineHeight-compact: 1.2;
+    --typography-fontWeight-heading: 600;
+    --typography-fontWeight-body: 400;
+    --typography-fontWeight-emphasis: 500;
+    --color-primary: #1565C0;
+    --color-secondary: #0288D1;
+    --color-accent: #00897B;
+    --color-text: #212121;
+    --color-textSecondary: #616161;
+    --color-heading: #1A237E;
+    --color-divider: #E0E0E0;
+    --color-background: #FFFFFF;
+    --color-surface: #F5F7FA;
+    --color-dataViz-series1: #1565C0;
+    --color-dataViz-series2: #00897B;
+    --color-dataViz-series3: #F9A825;
+    --color-dataViz-series4: #E53935;
+    --color-dataViz-series5: #7B1FA2;
+    --color-dataViz-series6: #0288D1;
+    --spacing-paragraph: 0.75em;
+    --spacing-paragraphAfter: 0.75em;
+    --spacing-indent: 0em;
+    --spacing-sectionGap: 2.5em;
+    --spacing-cardPadding: 1.5em;
+    --layout-marginTop: 2.5cm;
+    --layout-marginBottom: 2.0cm;
+    --layout-marginLeft: 2.5cm;
+    --layout-marginRight: 2.5cm;
+    --layout-pageSize: A4;
+    --layout-maxContentWidth: 160mm;
+    --fs-h1: var(--typography-fontSize-h1, 20pt);
+    --fs-h2: var(--typography-fontSize-h2, 16pt);
+    --fs-h3: var(--typography-fontSize-h3, 13pt);
+    --fs-body: var(--typography-fontSize-body, 11pt);
+    --fs-small: var(--typography-fontSize-small, 9pt);
+    --ff-heading: var(--typography-fontFamily-heading, "Microsoft YaHei");
+    --ff-body: var(--typography-fontFamily-body, "Microsoft YaHei");
+    --lh-body: var(--typography-lineHeight-body, 1.7);
+    --color-primary: var(--color-primary, #1a4f8b);
+    --color-text: var(--color-text, #1a1a1a);
+    --color-muted: var(--color-muted, #5b6470);
+    --color-border: var(--color-border, #c9d2dd);
+    --color-highlight: var(--color-highlight, #f3f6fa);
+    --spacing-paragraph: 0.6em;
+    --spacing-section: 1.6em;
+    --spacing-block: 0.9em;
+    --margin-page: 2.4cm;
+    --page-content-width: 15.6cm;
+    --ff-code: Consolas, "Courier New", monospace;
+    --fs-code: 0.94em;
+    --sp-list-margin: 0 0 var(--spacing-block) 1.4em;
+    --sp-list-padding: 1.1em;
+    --sp-li-bottom: 0.35em;
+    --sp-code-padding: 0 2px;
+    --sp-eyebrow-bottom: 0.8em;
+    --sp-title-bottom: 0.4em;
+    --sp-subtitle-bottom: 1.2em;
+    --sp-toc-li-bottom: 0.25em;
+    --sp-summary-padding: 0.9em;
+    --sp-cell-padding: 0.4em 0.55em;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    font-family: var(--ff-body); font-size: var(--fs-body); line-height: var(--lh-body);
+    color: var(--color-text); margin: 0 auto; max-width: var(--page-content-width);
+  }
+  h2 { font-family: var(--ff-heading); font-size: var(--fs-h2); font-weight: 700;
+        color: var(--color-primary); margin: var(--spacing-section) 0 var(--spacing-paragraph) 0; }
+  h3 { font-family: var(--ff-heading); font-size: var(--fs-h3); font-weight: 700;
+        margin: var(--spacing-block) 0 var(--spacing-paragraph) 0; }
+  p { margin: 0 0 var(--spacing-paragraph) 0; text-align: justify; }
+  ul, ol { margin: var(--sp-list-margin); padding-left: var(--sp-list-padding); }
+  li { margin-bottom: var(--sp-li-bottom); }
+  code { font-family: var(--ff-code); font-size: var(--fs-code);
+          background: var(--color-highlight); padding: var(--sp-code-padding); }
+
+  .report-cover { padding: var(--margin-page) 0 var(--spacing-section) 0; border-bottom: 2px solid var(--color-primary); }
+  .cover-category { font-family: var(--ff-heading); font-size: var(--fs-small); font-weight: 700;
+                     color: var(--color-primary); letter-spacing: 0.08em; margin-bottom: var(--sp-eyebrow-bottom); }
+  .cover-title { font-family: var(--ff-heading); font-size: var(--fs-h1); font-weight: 700;
+                  color: var(--color-primary); margin: 0 0 var(--sp-title-bottom) 0; line-height: 1.35; }
+  .cover-subtitle { font-size: var(--fs-h3); color: var(--color-muted); margin-bottom: var(--sp-subtitle-bottom); }
+  .cover-meta { font-size: var(--fs-small); color: var(--color-muted); }
+
+  .doc-toc { padding: var(--spacing-block) 0; border-bottom: 1px solid var(--color-border); margin-bottom: var(--spacing-section); }
+  .toc-title { font-family: var(--ff-heading); font-weight: 700; margin-bottom: var(--sp-title-bottom); }
+  .toc-list { list-style: none; margin: 0; padding-left: 0; }
+  .toc-list li { margin-bottom: var(--sp-toc-li-bottom); }
+  .toc-list a { color: var(--color-primary); text-decoration: none; }
+
+  .executive-summary { background: var(--color-highlight); padding: var(--spacing-block) var(--sp-summary-padding);
+                        border-left: 4px solid var(--color-primary); margin-bottom: var(--spacing-section); }
+  .executive-summary h2 { margin-top: 0; }
+
+  table.data-table { width: 100%; border-collapse: collapse; margin: 0 0 var(--spacing-block) 0; font-size: var(--fs-small); }
+  table.data-table th, table.data-table td { border: 1px solid var(--color-border); padding: var(--sp-cell-padding); text-align: left; vertical-align: top; }
+  table.data-table th { background: var(--color-highlight); font-family: var(--ff-heading); font-weight: 700; }
+  table.kv td:first-child { width: 30%; color: var(--color-muted); }
+  .appendix { border-top: 1px solid var(--color-border); margin-top: var(--spacing-section); padding-top: var(--spacing-block); }
+  .appendix p { font-size: var(--fs-small); color: var(--color-muted); }
+  </style>
+</head>
+<body>
+  <section role="cover" class="report-cover">
+    <p class="cover-category">八界杯创新挑战赛 · 初赛作品说明（题目一）</p>
+    <h1 class="cover-title">题目一 · 关节分步驱动与 RViz 展示</h1>
+    <p class="cover-subtitle">解题思路与创新点</p>
+    <div class="cover-meta"><p>作品：靳喻宝-曾煜翔 ｜ 2026-11-24 ｜ 作答：answers/q1_demo_output.jsonl</p></div>
+  </section>
+
+  <section role="body" data-page-restart="1">
+    <nav class="doc-toc">
+      <p class="toc-title">目录</p>
+      <ol class="toc-list"><li><a href="#sec1">一、题目概览</a></li><li><a href="#sec2">二、题面要求与本作品的对应实现</a></li><li><a href="#sec3">三、解题思路</a></li><li><a href="#sec4">四、创新点</a></li><li><a href="#sec5">五、验证结果</a></li><li><a href="#sec6">六、局限与改进方向</a></li></ol>
+    </nav>
+
+    <div class="executive-summary">
+      <h2>执行摘要</h2>
+      <p>本题把「分步驱动」当作确定性状态机来设计：用固定随机源由 seed 抽样出五阶段目标位姿，逐段插值并按规定保持，每阶段结束快照 10 个关节。作答与官方公布的 q1_all_seed7 示例十关节逐值一致（误差 0.0e+00），可逐字节复现。轨迹净空按「整段保守下界」与「该帧静态几何下界」两种口径同时记录，只告警不阻断——因为官方示例位姿本身就不满足 5 cm / 2 cm 阈值，若据此阻断反而无法与官方关键帧一致。</p>
+      <table class="data-table kv"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>题号</td><td>题目一 · 关节分步驱动与 RViz 展示</td></tr><tr><td>源码目录</td><td>src/question1_project/</td></tr><tr><td>输入</td><td>inputs/q1_demo_input.jsonl（q1_all_seed7）</td></tr><tr><td>作答</td><td>answers/q1_demo_output.jsonl：1 行、5 个关键帧</td></tr><tr><td>实测</td><td>五阶段约 30 s；作答 SHA-256 6e7db6ba…dc2081</td></tr></tbody></table>
+    </div>
+
+    <main>
+<h2 id="sec1">一、题目概览</h2>
+<p>本题要求在 RViz 中按「升降 → 头部俯仰 → 机械臂 → 夹爪张开 → 夹爪闭合」的顺序分步驱动官方八界机器人的 10 个关节，每个阶段完成后保持指定时长，并把每个阶段结束时的完整关节状态记录为关键帧。</p>
+<table class="data-table"><thead><tr><th>项目</th><th>内容</th></tr></thead><tbody><tr><td>题号</td><td>题目一</td></tr><tr><td>题目名称</td><td>关节分步驱动与 RViz 展示</td></tr><tr><td>源码目录</td><td><code>src/question1_project/</code>（ROS 2 包 <code>bajie_tasks</code>：<code>q1_drive</code> 驱动节点 + <code>q1_safety</code> 净空模型 + launch + 单元测试）</td></tr><tr><td>输入</td><td><code>inputs/q1_demo_input.jsonl</code>，公开测例 <code>q1_all_seed7</code></td></tr><tr><td>作答</td><td><code>answers/q1_demo_output.jsonl</code>，1 行、5 个关键帧</td></tr><tr><td>演示</td><td><code>video/q1_rviz.mp4</code>（RViz 实录，32.6 s）</td></tr></tbody></table>
+<h2 id="sec2">二、题面要求与本作品的对应实现</h2>
+<table class="data-table"><thead><tr><th>题面要求</th><th>本作品的实现</th></tr></thead><tbody><tr><td>在 RViz 中依次展示升降、头部俯仰、机械臂运动、夹爪张开和夹爪闭合</td><td>驱动节点按 <code>lift → head → arm → gripper_open → gripper_close</code> 五阶段依次插值，每个阶段只改动本阶段所属关节，其余关节保持不动；<code>--gui</code> 时由 launch 同时拉起 <code>robot_state_publisher</code> 与 RViz</td></tr><tr><td>升降、头部和机械臂三阶段完成后分别等待 <code>pause_sec</code>（默认 5 秒）</td><td>三个阶段结束处各调用一次 <code>hold(pause_sec)</code>，保持当前位姿并持续发布关节状态；夹爪张开与闭合之间不插入暂停</td></tr><tr><td>每个阶段完成时记录全部 10 个关节的状态</td><td>每阶段结束把 <code>lift_joint</code>、<code>pitch_joint</code>、<code>joint1</code>–<code>joint6</code>、<code>arm_finger_joint1</code>、<code>arm_finger_joint2</code> 的当前值写入该阶段关键帧</td></tr><tr><td>输出 <code>id</code>、<code>step</code>、<code>keyframes</code>、<code>final_joint_state</code></td><td>四个字段齐备；<code>keyframes</code> 按上述五阶段顺序排列，<code>final_joint_state</code> 与最后一帧逐值一致</td></tr></tbody></table>
+<h2 id="sec3">三、解题思路</h2>
+<p>本节先给出总体设计，再逐项拆解五个关键环节，最后交代一处关键取舍——净空为什么只记录、不阻断。</p>
+<h3>3.1 总体设计</h3>
+<p>本题的形态是一个「确定性状态机」，不需要闭环控制，因此设计重点不在算法复杂度，而在<strong>可复现性</strong>与<strong>证据完整性</strong>。整条链路是：</p>
+<ol><li>读取输入 JSONL，得到 <code>seed</code>、<code>move_sec</code>、<code>pause_sec</code>；</li><li>用 <code>seed</code> 驱动一个固定随机源，抽样出五个阶段的目标位姿；</li><li>逐阶段插值到目标位姿，阶段之间按规则保持；</li><li>每阶段结束快照 10 个关节，组成关键帧；</li><li>全部阶段结束后，把关键帧与最终状态一次性写出为作答。</li></ol>
+<p>驱动节点是<strong>唯一的 <code>/joint_states</code> 发布者</strong>，<code>robot_state_publisher</code> 只订阅并发布 TF，RViz 只做渲染。这一点是有意为之：若同时启动 <code>joint_state_publisher_gui</code>，两个节点会以不同节拍写同一话题，RViz 中的模型会出现抖动，且「关键帧对应的到底是哪一帧」将无法回答。</p>
+<h3>3.2 关键环节</h3>
+<p><strong>（1）目标位姿的抽样口径。</strong> 每个阶段的关节目标由 <code>random.Random(seed)</code> 对九个预设区间依次均匀抽样、保留 6 位小数得到，不引入任何系统时间、进程状态或环境变量。因此同一个 <code>seed</code> 在任何机器上都得到同一组目标值——这是本题「可逐字节复现」的基础。</p>
+<p><strong>（2）插值与节拍。</strong> 阶段内用 smoothstep 曲线从当前位姿插值到目标位姿，起止速度为零，避免关节在阶段切换处跳变；发布节拍固定 30 Hz，由 <code>time.sleep(1/publish_hz)</code> 控制而不是 <code>create_rate()</code>，这样在未 <code>spin</code> 的驱动循环里也不会阻塞。</p>
+<p><strong>（3）保持段。</strong> <code>hold(pause_sec)</code> 不做任何插值，只按同一节拍重复发布当前状态。它的作用是让 RViz 上的姿态停留足够长、便于观察与录制，同时保证「阶段完成时刻」与「关键帧快照时刻」是同一个稳定状态。</p>
+<p><strong>（4）净空的度量方式。</strong> 用官方 URDF 的 visual 与 collision 几何构造每个连杆的局部包围盒，正向算出各连杆位姿，逐段量出「离 <code>base_footprint</code> 下 z=0 地面」与「离非相连机身」的两个下界。这里必须区分两种口径：</p>
+<table class="data-table"><thead><tr><th>阶段</th><th>整段运动保守下界（地面 / 机身）</th><th>该帧静态几何下界（地面 / 机身）</th></tr></thead><tbody><tr><td>lift</td><td>0.514 / −0.200</td><td>0.759 / 0.044</td></tr><tr><td>head</td><td>0.759 / 0.044</td><td>0.759 / 0.044</td></tr><tr><td>arm</td><td>−0.807 / −0.407</td><td>−0.056 / 0.006</td></tr><tr><td>gripper_open</td><td>−0.070 / 0.006</td><td>−0.054 / 0.006</td></tr><tr><td>gripper_close</td><td>−0.070 / 0.006</td><td>−0.056 / 0.006</td></tr></tbody></table>
+<p>「整段保守下界」等于该段逐帧几何下界的最小值再减去这段里任一点可能移动的距离（旋转关节按半径 × 转角估计），因此臂段转角大时会被扣掉大量余量；「该帧静态几何下界」只反映关键帧那一瞬间的真实几何关系。夹爪实际下探到地面以下 5.6 cm，与 RViz 画面一致。</p>
+<h3>3.3 关键取舍：净空为什么只记录、不阻断</h3>
+<p>最初的设计是「净空不足即拒绝播放」。实测发现官方 <code>q1_all_seed7</code> 示例位姿本身就不满足 5 cm / 2 cm 两档阈值——若坚持阻断，作答就无法与官方公布的关键帧一致，等于用自定的安全阈值否决了题面的标准答案。</p>
+<p>于是改为<strong>分档处理</strong>：阈值判断保留为可开关的硬约束（<code>certify(enforce_ground=…, enforce_body=…)</code>），题一驱动显式传 <code>False</code>，只把数值写进日志。这样既不篡改官方位姿，又留下了可复核的量化证据；而「包围盒重叠不等于网格相交」这一点也在文档中写明，避免把几何估计误读为物理碰撞。</p>
+<h2 id="sec4">四、创新点</h2>
+<p>四条创新点分别对应「可复现」「可解释」「数据同源」「工程可靠」四个维度，每条都给出做法、理由与可复核的证据。</p>
+<h3>创新点一：抽样口径完全确定，作答与官方示例逐值一致</h3>
+<p><strong>做法</strong>：用 <code>random.Random(seed)</code> 固定随机源，对九个预设区间依次抽样并统一保留 6 位小数，区间表固化在代码的 <code>SEED_RANGES</code> 中。</p>
+<p><strong>为什么更好</strong>：多数实现会直接调用全局 <code>random</code> 或依赖 <code>numpy.random</code> 的默认状态，同一 <code>seed</code> 在不同版本、不同调用顺序下可能给出不同序列。把随机源、抽样顺序、区间、精度四件事全部钉死，才能做到跨机器逐字节一致。</p>
+<p><strong>证据</strong>：作答与官方 README 公布的 <code>q1_all_seed7</code> 示例十关节逐值比对，误差 0.0e+00；作答文件 SHA-256 为 <code>6e7db6ba…dc2081</code>，多次重跑不变。</p>
+<h3>创新点二：把「净空」拆成两种口径，并说明各自用途</h3>
+<p><strong>做法</strong>：同一套几何模型输出两个量——整段运动的保守下界与该帧的静态几何下界，两者同时写进文档与日志表。</p>
+<p><strong>为什么更好</strong>：只报一个数会出现两种相反的误判。只报保守下界，−0.807 m 看起来像「机械臂扎进地里 80 cm」，与画面矛盾；只报静态下界，又丢掉了「整段插值过程中是否可能擦碰」的信息。分开报，读者能同时看到「最坏情况上界」与「实际那一刻」。</p>
+<p><strong>证据</strong>：见 3.2 的对照表；臂段 −0.807 m 中几何只占 −0.056 m，其余是运动余量，可由 <code>assets/q1_run.log</code> 与该帧姿态复算验证。</p>
+<h3>创新点三：单一状态发布源，关键帧与画面严格同源</h3>
+<p><strong>做法</strong>：<code>/joint_states</code> 只由 <code>q1_drive</code> 一个节点发布，launch 显式不启动 <code>joint_state_publisher_gui</code>。</p>
+<p><strong>为什么更好</strong>：关键帧记录的是「节点此刻发布的状态」，RViz 渲染的也是「同一话题的最新消息」。只有一个发布者，关键帧、TF、画面三者天然一致；有两个发布者时，学术上叫「状态源不一致」，工程上表现为模型抖动、录像对不上数据。</p>
+<p><strong>证据</strong>：<code>video/q1_rviz.mp4</code> 中五阶段动作与 <code>answers/q1_demo_output.jsonl</code> 的五个关键帧一一对应；日志中 <code>/joint_states</code> 稳定在约 30 Hz。</p>
+<h3>创新点四：作答原子写出，失败不污染既有结果</h3>
+<p><strong>做法</strong>：先把全部测例算完、校验完，再一次性写文件；写失败时保留原作答。</p>
+<p><strong>为什么更好</strong>：演示类程序很容易在「跑到一半」时被中断（手动 Ctrl-C、RViz 崩溃、机器卡顿），若边跑边写，交付的作答可能是半份。原子写出让「文件存在」等价于「这一轮完整跑完」。</p>
+<p><strong>证据</strong>：题一重跑多次后作答哈希不变；跨题目一致（题二、题三同策略）。</p>
+<h2 id="sec5">五、验证结果</h2>
+<table class="data-table"><thead><tr><th>验证项</th><th>结果</th></tr></thead><tbody><tr><td>关键帧数量与顺序</td><td>5 帧，<code>lift → head → arm → gripper_open → gripper_close</code></td></tr><tr><td>关节字段完整性</td><td>每帧 10 个关节齐全，且全部落在官方 URDF 的 <code>limit</code> 内</td></tr><tr><td>最终状态一致性</td><td><code>final_joint_state</code> 与最后一个关键帧逐值相等</td></tr><tr><td>与官方示例比对</td><td>十关节逐值一致，误差 0.0e+00</td></tr><tr><td>作答可复现性</td><td>SHA-256 <code>6e7db6ba…dc2081</code>，多次重跑一致</td></tr><tr><td>运行耗时</td><td>约 30 s（五次移动各 3 s + 三次保持各 5 s）</td></tr><tr><td>演示视频</td><td><code>video/q1_rviz.mp4</code>，976×720 / 25 fps / H.264+AAC，888,772 字节</td></tr></tbody></table>
+<h2 id="sec6">六、局限与改进方向</h2>
+<ul><li>净空是包围盒几何估计，不是物理接触仿真：包围盒重叠不等于网格相交，因此它只能作为「是否需要人工复核」的提示，不能作为安全结论。</li><li>目前只在固定判据（10 关节、五阶段）下验证；若题面扩展到更多阶段或可变关节集合，需要把阶段表与抽样区间外置为配置。</li><li>保持段时长与发布频率是常量，若在低性能机器上录制，可能出现丢帧；更稳妥的做法是把「按时间保持」改为「按发布帧数保持」。</li></ul>
+    </main>
+
+    <div class="appendix">
+      <p>本文档为「八界杯创新挑战赛」初赛作品说明之一，与另外两份题目说明配套使用；文中数值、哈希与日志均可在作品目录内复核。</p>
+    </div>
+  </section>
+</body>
+</html>

@@ -1,4 +1,3 @@
-
 # 八界杯创新挑战赛初赛作品：八界机器人关节展示、运动学与仿真触碰
 
 本目录是初赛作品的完整提交单元，按官方示例的章节顺序组织：作品信息、目录结构、运行环境与依赖、三道题的实现与运行、作答格式与单位、复现步骤与材料、提交前自查、原创内容与引用来源。三题源码、官方模型与仿真资源、输入、作答、运行日志和演示视频都在这里，不依赖本目录之外的任何文件。
@@ -35,7 +34,8 @@
 - 题目三依赖物理接触，跨机器、跨驱动版本不承诺作答逐字节一致，验收以日志中的 `outcome=contact` / `visible_surface=touch` 为准；同机同版本实测可逐字节复现。
 - 题目三要求 `ROS 2 Humble`（Isaac Sim 4.5 自带 Python 3.10），题目一、题目二在 Humble 与 Jazzy 上均验证可用。
 - 题目三启动前会预检可用内存 ≥ 12,800 MiB、空闲显存 ≥ 6,000 MiB；实测 11.8 GB 内存亦可跑完三例，此时可设 `Q3_SKIP_CHECKS=1` 跳过预检。NVIDIA 驱动需落在 535~580，595.x 会在 RTX 初始化时段错误。
-- 题目一的净空是包围盒几何估计，不是物理接触仿真；官方示例位姿本身即不满足 5 cm / 2 cm 阈值，因此净空只记录、不否决播放（数值见 4.1）。
+- 题目一的净空是包围盒几何估计，不是物理接触仿真；官方示例位姿本身即不满足 5 cm / 2 cm 阈值，净空就只记录、不否决播放（数值见 4.1）。
+- 题目一、题目三的复跑命令统一使用 GUI 原生窗口（`run_q1.sh --gui`、`run_q3.sh --gui`），需要可用的图形桌面；无图形栈时去掉 `--gui` 即走无界面模式，作答内容一致，仅看不到三维画面。
 
 ## 二、目录结构
 
@@ -46,7 +46,7 @@
 │   ├── bajie_robot/            # 官方 URDF 包：urdf/ meshes/ calib/ launch/ rviz/
 │   ├── bajie_sim/              # 官方仿真资源：scene/ machine/ models/ scripts/ doc/（约 1.1 GB）
 │   ├── question1_project/      # 题目一源码：bajie_tasks（q1_drive / q1_safety）、launch、test
-│   │   ├── run_q1.sh           # 题目一入口（默认无界面，--gui 启动 RViz）
+│   │   ├── run_q1.sh           # 题目一入口（--gui 启动 RViz 原生窗口）
 │   │   ├── run_all.sh          # 一键依次跑三题（自检 → 题一 → 题二 → 题三）
 │   │   ├── run_tests.sh        # 三题单元测试（58 项）
 │   │   ├── check_env.sh        # 环境自检：ROS / NumPy / SciPy / Isaac / 官方资源指纹
@@ -64,7 +64,10 @@
 │   ├── q2_demo_output.jsonl    # 题目二实际作答结果
 │   └── q3_demo_output.jsonl    # 题目三实际作答结果
 ├── docs/
-│   └── 提交自查.md             # 提交前核对清单
+│   ├── 提交自查.md             # 提交前核对清单
+│   ├── 题目一_关节分步驱动与RViz展示_解题思路与创新点.md
+│   ├── 题目二_正向运动学与坐标变换_解题思路与创新点.md
+│   └── 题目三_IsaacSim玩具触碰_解题思路与创新点.md   # 三题各自的解法说明与设计取舍（Markdown）
 ├── assets/                     # 各题完整终端日志、题三结构化运行产物、哈希清单
 │   ├── q1_run.log  q2_run.log  q2_humble_verify.log
 │   ├── q3_docker_run.log  q3_run.log
@@ -152,15 +155,15 @@ bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺�
 
 **实现要求**（题面要求与对应实现）：
 
-1. 在 RViz 中依次展示升降、头部俯仰、机械臂运动、夹爪张开和夹爪闭合 —— `q1_drive` 按 `lift → head → arm → gripper_open → gripper_close` 五阶段依次插值（smoothstep），每个阶段只改动本阶段的关节，其余关节保持不动；`--gui` 时由 launch 同时拉起 `robot_state_publisher` 与 RViz，`/joint_states` 只由 `q1_drive` 一个节点发布。
-2. 升降、头部和机械臂三个阶段完成后，分别等待 `pause_sec`（默认 5 秒）—— 驱动节点在 `lift`、`head`、`arm` 三个阶段结束处各调用一次 `hold(pause_sec)`，保持当前位姿并持续发布状态；夹爪张开与闭合之间不插入暂停。
-3. 每个阶段完成时记录全部 10 个关节的状态 —— 每个阶段结束把 `lift_joint`、`pitch_joint`、`joint1`–`joint6`、`arm_finger_joint1`、`arm_finger_joint2` 的当前值写入该阶段的关键帧。
+1. 在 RViz 中依次展示升降、头部俯仰、机械臂运动、夹爪张开和夹爪闭合。`q1_drive` 按 `lift → head → arm → gripper_open → gripper_close` 五段依次插值（smoothstep），一段只动本段关节，其余不动。加 `--gui` 时 launch 会同时拉起 `robot_state_publisher` 与 RViz，`/joint_states` 只由 `q1_drive` 一个节点发布。
+2. 升降、头部和机械臂三段做完后，各等一次 `pause_sec`（默认 5 秒）。节点在这三段的收尾处调用 `hold(pause_sec)`，原地保持并继续发状态。夹爪张开与闭合之间不插停顿。
+3. 每个阶段完成时记录全部 10 个关节的状态。段末把 `lift_joint`、`pitch_joint`、`joint1`–`joint6`、`arm_finger_joint1`、`arm_finger_joint2` 的当前值原样写进该段关键帧。
 
-目标位姿由 `seed` 决定：用 `random.Random(seed)` 对九个预设区间依次均匀抽样、保留 6 位小数，因此同一 `seed` 可复现。作答与官方 README §2.2 公布的 `q1_all_seed7` 示例十关节逐值一致（误差 0.0e+00）。
+目标位姿由 `seed` 决定：`random.Random(seed)` 对九个预设区间依次均匀抽样，统一保留 6 位小数。同一个 `seed` 换台机器也是同一组目标值。作答与官方 README §2.2 公布的 `q1_all_seed7` 示例十关节逐值一致（误差 0.0e+00）。
 
-**轨迹净空（记录口径）**：程序用官方 URDF 的可视与碰撞几何构造包围盒，正向计算各连杆位姿，逐段量出「离 `base_footprint` 下 z=0 地面」和「离非相连机身」的下界。**只记录、不否决播放**——官方示例位姿本身就压到地面以下、机身包围盒也贴住，若据此阻断，作答就无法与官方公布的关键帧一致。这是几何包围盒估计，不是物理接触仿真；包围盒重叠不等于网格相交。
+**轨迹净空（记录口径）**：程序拿官方 URDF 的可视与碰撞几何拼包围盒，正向算各连杆位姿，逐段量两个下界：离 `base_footprint` 下方 z=0 地面多远，离非相连机身多远。**只记录、不否决播放**。官方示例位姿本身就压到地面以下，机身包围盒也贴住；真要据此阻断，作答就跟官方公布的关键帧对不上了。这是几何包围盒估计，不是物理接触仿真，包围盒重叠不等于网格相交。
 
-日志里打印的「净空下界」是**整段插值运动的保守下界**：先取该段两端之间逐帧几何下界的最小值，再减去这一段里任一点可能移动的距离（旋转关节按半径 × 转角的估计）。臂段转角大，扣掉的余量也大，因此日志值比该帧的几何值更负，两者不能混着比：
+日志里打印的「净空下界」是**整段插值运动的保守下界**：先取该段两端之间逐帧几何下界的最小值，再减去这一段里任一点可能移动的距离（旋转关节按半径 × 转角的估计）。臂段转角大，扣掉的余量也大，日志值就比该帧的几何值更负。两者不能混着比：
 
 | 阶段          | 日志「净空下界」（整段保守，地面 / 机身） | 该帧静态几何（地面 / 机身，最低连杆）     |
 | ------------- | ----------------------------------------- | ----------------------------------------- |
@@ -170,21 +173,20 @@ bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺�
 | gripper_open  | −0.070 / 0.006                           | −0.054 / 0.006（`gripper_right_link`） |
 | gripper_close | −0.070 / 0.006                           | −0.056 / 0.006（`gripper_right_link`） |
 
-单位米。「整段保守」列取自 `assets/q1_run.log`；lift 段的最小值落在起点（零位 0.514 m），因此比该帧静态值低；arm 段的 −0.807 m 中几何只占 −0.056 m，其余是整段运动余量——夹爪实际下探到地面以下 5.6 cm，与 RViz 画面一致。阈值 5 cm / 2 cm 两档都不满足，正是不阻断的理由。
+单位米。「整段保守」列取自 `assets/q1_run.log`。lift 段的最小值落在起点（零位 0.514 m），比该帧静态值低。arm 段那个 −0.807 m，几何只占 −0.056，其余全是运动余量；夹爪实际探到地面以下 5.6 cm，跟 RViz 里看到的一致。5 cm 与 2 cm 两档都不满足，这就是不阻断的理由。
 
-**输出文件**：`answers/q1_demo_output.jsonl`，1 行，字段为 `id`、`step`、`keyframes`、`final_joint_state`。`keyframes` 按 `lift`、`head`、`arm`、`gripper_open`、`gripper_close` 顺序记录，每帧含 `name` 与 10 关节的 `joint_state`；`final_joint_state` 与最后一个关键帧逐值一致。
+**输出文件**：`answers/q1_demo_output.jsonl`，1 行，字段为 `id`、`step`、`keyframes`、`final_joint_state`。`keyframes` 按 `lift`、`head`、`arm`、`gripper_open`、`gripper_close` 顺序记录，每帧含 `name` 与 10 关节的 `joint_state`；`final_joint_state` 与末帧逐值一致。
 
 **运行说明**：
 
 ```bash
 # 执行目录：作品目录（本 README 所在目录）
-bash src/question1_project/run_q1.sh          # 无界面，只跑驱动节点（评审复跑用这条）
-bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz 展示三维模型（录演示视频用）
+bash src/question1_project/run_q1.sh --gui    # 启动 RViz 原生窗口，边跑边看五阶段动作（评审复跑用这条）
 ```
 
-`run_q1.sh` 自动 `source` ROS 2、`colcon build` 两个包并 `source install/setup.bash`，随后启动节点。输入由 `input_file` 参数读取 `inputs/q1_demo_input.jsonl`；作答写入 `answers/q1_demo_output.jsonl`；终端输出同时落到 `assets/q1_run.log`（可用 `Q1_LOG` 指定别的路径）。**预期完成标志**：日志末尾出现 `[q1] 完成：… 共 1 行`，作答文件 1 行、5 个关键帧。实测耗时约 30 s（五次移动各 3 s + 三次 5 s 保持）。手动命令等价形式见 `src/question1_project/README.md`。
+`run_q1.sh` 自动 `source` ROS 2、`colcon build` 两个包并 `source install/setup.bash`，随后启动节点。`--gui` 会同时拉起 `robot_state_publisher` 与 RViz，需要可用的图形桌面（`DISPLAY` 非空）；没有图形栈时去掉 `--gui` 即走无界面模式，作答内容一致，只是看不到三维画面。输入由 `input_file` 参数读取 `inputs/q1_demo_input.jsonl`；作答写入 `answers/q1_demo_output.jsonl`；终端输出同时落到 `assets/q1_run.log`（可用 `Q1_LOG` 指定别的路径）。**预期完成标志**：日志末尾出现 `[q1] 完成：… 共 1 行`，作答文件 1 行、5 个关键帧。实测耗时约 30 s（五次移动各 3 s + 三次 5 s 保持）。手动命令等价形式见 `src/question1_project/README.md`。
 
-**验收与演示**：RViz 中可见完整动作顺序（升降 → 头部 → 机械臂 → 夹爪张开 → 夹爪闭合）；关键帧顺序与关节字段齐全，最终状态与最后一帧一致。完整终端日志见 `assets/q1_run.log`，RViz 演示视频见 `video/q1_rviz.mp4`。
+**验收与演示**：RViz 中可见完整动作顺序（升降 → 头部 → 机械臂 → 夹爪张开 → 夹爪闭合）；关键帧顺序与关节字段齐全，结束态与末帧一致。完整终端日志见 `assets/q1_run.log`，RViz 演示视频见 `video/q1_rviz.mp4`。
 
 ### 4.2 题目二 正向运动学与坐标变换
 
@@ -199,11 +201,11 @@ bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz 展示三维�
 
 **实现要求**（题面要求与对应实现）：
 
-1. 根据关节状态和官方模型计算 `objects_link` 相对 `base_footprint` 的位姿 —— **运动链读取方式**：解析 `src/question2_project/generated/bajie_robot.urdf`（官方 xacro 展开，`origin` 未改），从 `objects_link` 沿父关节回溯到 `base_footprint`，得到一条有序关节链并倒序相乘。每段先代入模型给出的 `origin`，再在关节局部系中沿 `axis` 平移（prismatic）或旋转（revolute/continuous），即 `T_origin @ T_motion(q)`。头部俯仰与两指是旁支，其值要读取但不参与这条链；固定关节没有输入量，仍贡献位置与朝向。
-2. 将物体在底盘坐标系中的位姿变换到夹爪的 `objects_link` 坐标系 —— **坐标变换计算**：`T_objects_link^scene = (T_base^objects_link)^{-1} · T_base^scene`，其中 `T_base^scene` 直接取自输入的 `scene_object_in_base_footprint`（`rpy` 按 Rz·Ry·Rx 转成旋转矩阵）。
-3. 姿态表示转换 —— 内部一律用 4×4 齐次矩阵运算；输出时把旋转矩阵转成 `rpy`（`pitch = asin(−R20)`，`roll = atan2(R21, R22)`，`yaw = atan2(R10, R00)`）与 `quat_xyzw`（按 `[x, y, z, w]` 顺序输出，写入前归一）。两组位姿的 `rpy` 与 `quat_xyzw` 互相自洽，实测互推差 < 1e-18 rad。
+1. 根据关节状态和官方模型计算 `objects_link` 相对 `base_footprint` 的位姿。**运动链读取方式**：解析 `src/question2_project/generated/bajie_robot.urdf`（官方 xacro 展开，`origin` 未改），从 `objects_link` 沿父关节往上一路回溯到 `base_footprint`，拿到一条有序关节链，再倒序相乘。每段先代入模型给出的 `origin`，再在关节局部系中沿 `axis` 平移（prismatic）或旋转（revolute/continuous），即 `T_origin @ T_motion(q)`。头部俯仰与两指是旁支，其值要读取但不参与这条链；固定关节没有输入量，仍贡献位置与朝向。
+2. 把物体在底盘坐标系中的位姿换到夹爪的 `objects_link` 坐标系。**坐标变换计算**：`T_objects_link^scene = (T_base^objects_link)^{-1} · T_base^scene`，其中 `T_base^scene` 直接取自输入的 `scene_object_in_base_footprint`（`rpy` 按 Rz·Ry·Rx 转成旋转矩阵）。
+3. 姿态表示转换。内部一律走 4×4 齐次矩阵，只在输出时把旋转矩阵转成 `rpy`（`pitch = asin(−R20)`，`roll = atan2(R21, R22)`，`yaw = atan2(R10, R00)`）与 `quat_xyzw`（按 `[x, y, z, w]` 顺序输出，写入前归一）。两组位姿的 `rpy` 与 `quat_xyzw` 互相自洽，实测互推差 < 1e-18 rad。
 
-实现不依赖 TF 求解，只用 Python 与 NumPy；另用独立的 `robot_state_publisher` + TF2 进程（`frame_prefix=q2_verify/`）做第二套实现交叉验证，阈值 `1e-8 m` / `1e-7 rad`，三组用例（正式零位、仅 `lift_joint +0.1 m`、弯曲臂且物体带 `rpy=[0.2,−0.3,0.5]`）实测误差均在 1e-15 量级。
+求解不依赖 TF，只用 Python 与 NumPy。另起一个 `robot_state_publisher` + TF2 进程（`frame_prefix=q2_verify/`）当第二套实现，阈值 `1e-8 m` / `1e-7 rad`。三组用例（正式零位、只把 `lift_joint` 抬 0.1 m、弯臂且物体带 `rpy=[0.2,−0.3,0.5]`）实测误差都在 1e-15 量级。
 
 **输出文件**：`answers/q2_demo_output.jsonl`，1 行，字段为 `id`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`；两组位姿均含 `xyz`、`rpy`、`quat_xyzw`。
 
@@ -219,7 +221,7 @@ bash src/question2_project/run_q2.sh            # 同上，并自动补编译与
 bash src/question2_project/run_q2.sh --verify   # 追加 robot_state_publisher + TF2 独立复核
 ```
 
-求解本身不需要 ROS；`--verify` 才启动 `robot_state_publisher`，建议在干净的 ROS 域内执行。脚本先算完所有行再写文件（先写临时目录、成功后 `replace`），因此解析或计算失败不会覆盖已有作答。**预期完成标志**：终端出现求解完成的提示与 `answers/q2_demo_output.jsonl` 路径，作答 1 行；`--verify` 时三组复核误差均 < 1e-15。实测耗时 < 5 s。
+求解本身不需要 ROS；`--verify` 才启动 `robot_state_publisher`，建议在干净的 ROS 域内执行。脚本先算完所有行再写文件（先写临时目录、成功后 `replace`），解析或计算失败也不会覆盖已有作答。**预期完成标志**：终端出现求解完成的提示与 `answers/q2_demo_output.jsonl` 路径，作答 1 行；`--verify` 时三组复核误差均 < 1e-15。实测耗时 < 5 s。
 
 **验收与演示**：核对两组位姿的参考坐标系（`base_footprint` / `objects_link`）、单位（米、弧度）与四元数顺序（`[x, y, z, w]`）；完整终端日志见 `assets/q2_run.log` 与 `assets/q2_humble_verify.log`。题目二视频按题面为可选，本作品未录制。
 
@@ -231,39 +233,39 @@ bash src/question2_project/run_q2.sh --verify   # 追加 robot_state_publisher +
 
 **实现要求**（题面要求与对应实现）：
 
-1. 在 Isaac Sim 4.5 中打开官方场景，并配置 ROS 2 Bridge —— `run_touch.py` 只打开一次 `scene/abr_scene.usd`，把所有既有 `OmniGraph` 置为 inactive，只保留本题自己创建的桥接图；`bridge.py` 通过 ROS 2 发布关节反馈与指令（默认 `rmw_fastrtps_cpp`）。CPU PhysX、60 Hz 固定步长。
-2. 读取底盘和目标玩具的世界位姿，转换到规划所用坐标系 —— 底盘按 `base_footprint_in_world` 摆到世界中并用内存中的 `FixedJoint` 锚定；玩具位姿取 `scene_object_in_world`。规划在底盘系进行：`T_base^toy = (T_world^base)^{-1} · T_world^toy`；输出时再乘回夹爪位姿，得到玩具在 `objects_link` 中的位姿。
-3. 每个测例都从输入指定的初始关节状态开始，独立规划并控制机械臂完成触碰 —— 触碰后**不做归位**：沿当前腕姿竖直抬起最多 8 cm，直到连续 4 帧不再接触该玩具，再以同一实测十关节位姿为起点规划下一件，先竖直抬到悬停高度再横向对齐，因此三例是连续的；最后一例停在接触位姿。
-4. 目标位姿处理、运动规划、控制与触碰判定 —— 见下。
+1. 在 Isaac Sim 4.5 中开官方场景、配 ROS 2 Bridge。`run_touch.py` 只开一次 `scene/abr_scene.usd`，既有 `OmniGraph` 全部置 inactive，只留本题自建的桥接图；`bridge.py` 走 ROS 2 发关节反馈与指令（默认 `rmw_fastrtps_cpp`）。CPU PhysX，60 Hz 定步长。
+2. 读底盘与目标玩具的世界位姿，换到规划用的坐标系。底盘按 `base_footprint_in_world` 摆位，用内存里的 `FixedJoint` 锚住；玩具位姿取 `scene_object_in_world`。规划在底盘系做：`T_base^toy = (T_world^base)^{-1} · T_world^toy`；收尾时再乘夹爪位姿，得到玩具在 `objects_link` 里的位姿。
+3. 每个测例都从输入给的初始关节状态起步，独立规划、独立控制。碰完**不归位**：沿当前腕姿竖直抬最多 8 cm，连着 4 帧不碰该玩具，再拿同一组实测十关节位姿做起点规划下一件，先竖着抬到悬停高度，再横向对齐。三例是连着的，末例停在接触位姿。
+4. 目标位姿处理、运动规划、控制与触碰判定，见下。
 
 **目标位姿处理**：玩具世界位姿先换到 `base_footprint` 系，再按玩具轮廓生成一批候选接触姿态（表面法线方向与腕部朝向的组合），逐个做增量 IK 求出十关节目标。
 
-**运动规划**：以当前实测关节位姿为起点，用增量 IK（`scipy.optimize.least_squares`）求解，关节增量按 smoothstep 采样成 18 个路点，速度和关节限位在规划阶段即校验；夹指张开的接近姿态由上而下接近目标。
+**运动规划**：起点用当前实测关节位姿，不用指令值。增量 IK（`scipy.optimize.least_squares`）求出关节解，按 smoothstep 采成 18 个路点，限位与速度在规划阶段就校验掉。接近姿态是两指张开、由上而下贴目标。
 
-**控制**：路点逐条下发，手腕实测关节位置与速度连续四步达标后才允许合指；合指期间腕部目标不变。指 2 为场景中的随动关节，由指 1 联动。
+**控制**：路点一条条下发，等实测到位。手腕位置与速度连着四步稳住，才允许合指；合指期间腕部目标冻结。指 2 是场景里的随动关节，由指 1 带动。
 
-**触碰判定（双判据）**：同一根夹指需连续 6 个仿真步同时满足「对目标有带冲量的非正分离接触」与「夹指与玩具的可见网格相接」；只在碰撞外壳上接触不计成功。首次满足时保持指令，连续 6 步无有效接触才沿原方向微调，最多 4 次（合指每次 0.003 rad、下探每次 0.25 mm）。合指类动作的玩具位移上限 2 mm，`*_press` 垂直下压是有意轻碰，上限放宽到 6 mm。出现非目标碰撞即中止。
+**触碰判定（双判据）**：同一根夹指要连着 6 个仿真步同时满足两件事：对目标有带冲量的非正分离接触，夹指落在玩具的可见网格上。只碰到碰撞外壳不算。首次满足时保持指令，连续 6 步无有效接触才沿原方向微调，最多 4 次（合指每次 0.003 rad、下探每次 0.25 mm）。合指类动作的玩具位移上限 2 mm，`*_press` 垂直下压是有意轻碰，上限放宽到 6 mm。出现非目标碰撞即中止。
 
-**按玩具选择姿态**：魔方用 `cube_side`（合拢方向对准一条侧面法线）；恐龙用 `dinosaur_press`（腕部垂直下压、全程不合指，接触由下降产生，位移 0.823 mm）——恐龙侧脸近乎垂直，贴侧面合指会沿闭合圆弧把玩具推走（实测 2.14 mm），垂直下压只推 0.82 mm；软玩具同样优先 `soft_toy_press`，下压不可达时回退 `soft_upper` / `surface_close`。
+**按玩具选择姿态**：魔方用 `cube_side`，合拢方向对准一条侧面法线。恐龙用 `dinosaur_press`，腕部垂直下压、全程不合指，接触由下降产生，位移 0.823 mm。恐龙侧脸近乎垂直，贴侧面合指会沿闭合圆弧把玩具扫走（实测 2.14 mm），改成垂直下压只推 0.82 mm。软玩具同样优先 `soft_toy_press`，够不着再退到 `soft_upper` / `surface_close`。
 
-**输出文件**：`answers/q3_demo_output.jsonl`，三行，每行沿用输入 `id`，报告触碰完成时的 `final_joint_state`（10 个关节实测值）、夹爪相对底盘的 `objects_link_in_base_footprint`，以及玩具在 `objects_link` 坐标系中的位姿 `scene_object_in_objects_link`。三例都在同一会话中完成触碰并逐例脱离后，才按输入顺序**原子替换**作答文件；任何一例未确认接触则不写部分作答。
+**输出文件**：`answers/q3_demo_output.jsonl`，三行，每行沿用输入 `id`，报告触碰完成时的 `final_joint_state`（10 个关节实测值）、夹爪相对底盘的 `objects_link_in_base_footprint`，以及玩具在 `objects_link` 坐标系中的位姿 `scene_object_in_objects_link`。三例在同一会话里碰完、逐例确认脱离之后，才按输入顺序**原子替换**作答文件。哪一例没确认接触，就不写半份。
 
 **运行说明**：
 
 ```bash
-# 执行目录：作品目录
-bash src/question3_project/run_q3.sh --check          # 只探测 Isaac Sim / ROS 2 / 资源 / 内存 / 显存
-bash src/question3_project/run_q3.sh --case rubik_cube # 单例排查，约 2~3 分钟，不写正式作答
-Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh   # 整轮三例，写正式作答
+# 执行目录：作品目录（需要可用的图形桌面）
+bash src/question3_project/run_q3.sh --check                              # 只探测 Isaac Sim / ROS 2 / 资源 / 内存 / 显存
+bash src/question3_project/run_q3.sh --gui --case rubik_cube              # 单例排查，约 2~3 分钟，打开 Isaac Sim 原生窗口
+Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh --gui   # 整轮三例，带原生窗口并写正式作答
 
-# 容器路径（本机无需安装 Isaac Sim）
+# 无 Isaac Sim 时的容器路径（同样开原生窗口：Q3_GUI=1）
 docker build -f src/question3_project/Dockerfile -t bajie/sim:humble45 src/question3_project
-Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
+Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 ```
 
-原生路径需要 `export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>`（该目录须含 `python.sh` 与 `exts/`），首次无头启动建议同时 `export ACCEPT_EULA=Y PRIVACY_CONSENT=Y`。启动器自动定位 Isaac Sim、`source` ROS 2 Humble、预检内存与显存，超时自动终止（单例 600 s、整轮 1800 s，可用 `Q3_TIMEOUT` 覆盖）。默认策略 `adaptive-fallback`，日志逐例标注实际生效的 `strategy=`。**预期完成标志**：末尾出现 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`，作答 3 行。实测整轮 77.8 s（着色器缓存已热）。
+原生路径需要 `export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>`（该目录须含 `python.sh` 与 `exts/`），首次无头启动建议同时 `export ACCEPT_EULA=Y PRIVACY_CONSENT=Y`。`--gui` 打开 Isaac Sim 原生窗口，需要可用的 `DISPLAY`；没有图形桌面时去掉 `--gui` 走无界面模式，接触判定与作答完全一致。启动器自动定位 Isaac Sim、`source` ROS 2 Humble、预检内存与显存，超时自动终止（单例 600 s、整轮 1800 s，可用 `Q3_TIMEOUT` 覆盖）。默认策略 `adaptive-fallback`，日志逐例标注实际生效的 `strategy=`。**预期完成标志**：末尾出现 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`，作答 3 行。实测整轮 77.8 s（着色器缓存已热）。
 
-**验收与演示**：仿真中可见三例各自的触碰过程，作答与运行记录对应——本次提交的作答出自 `20261124T043221Z-c67f31` 这一次整轮运行（`exit=ok`、`written_rows=3`、`misses=[]`），该 run 目录内 `run.json` 与 3 份 `contact-*.json` 即为同源证据，逐例对应关系见 `assets/q3_evidence_index.json`；三例作答关节值与接触快照逐值一致（偏差 0.0 rad），由快照三方位姿反算的作答位姿偏差 < 1e-15 m。完整终端日志见 `assets/q3_docker_run.log`，Isaac Sim 触碰视频见 `video/q3_touch.mp4`。
+**验收与演示**：仿真里能看到三例各自的触碰过程，作答与运行记录对得上。本次提交的作答出自 `20261124T043221Z-c67f31` 这一次整轮运行（`exit=ok`、`written_rows=3`、`misses=[]`），run 目录里的 `run.json` 和 3 份 `contact-*.json` 就是同源证据，逐例对应关系见 `assets/q3_evidence_index.json`。三例作答的关节值与接触快照逐值一致，偏差 0.0 rad；从快照三方位姿反算出来的作答位姿，与文件相差不到 1e-15 m。完整终端日志见 `assets/q3_docker_run.log`，Isaac Sim 触碰视频见 `video/q3_touch.mp4`。
 
 ## 五、作答格式与单位
 
@@ -287,7 +289,7 @@ Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 
 1. 按第三节安装依赖，准备官方模型及仿真资源（本目录已随附，核对 3.1 的两个 SHA-256 即可）。
 2. 核对 `inputs/` 中的测例与正式题面一致（题目一 1 例 `q1_all_seed7`、题目二 1 例 `demo_zero`、题目三 3 例）。
-3. 按第四节各题的实际命令，在作品目录内运行程序：`bash src/question1_project/run_q1.sh`、`bash src/question2_project/run_q2.sh --verify`、`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh`。也可一条命令依次跑完：`bash src/question1_project/run_all.sh`。
+3. 按第四节各题的实际命令，在作品目录内运行程序：`bash src/question1_project/run_q1.sh --gui`、`bash src/question2_project/run_q2.sh --verify`、`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh --gui`。也可一条命令依次跑完：`bash src/question1_project/run_all.sh`（批量模式下题一、题三自动走无界面，适合无人值守；需要看演示时用上面带 `--gui` 的命令）。
 4. 逐个测例的实际作答写入 `answers/`（程序自行覆盖，题目三三例全通过才写）。
 5. 在 `assets/` 保存各题完整 `.log`（已随附），在 `video/` 提供题目一与题目三的演示视频（已随附）。
 6. 记录实际运行环境、测试条件与完成情况：环境见第三节，实测结果见第一节「实现状态」与第四节各题「验收与演示」，补充材料在 `docs/提交自查.md`。三题单元测试可一次跑完：`bash src/question1_project/run_tests.sh`（期望 58 项全过：5 + 8 + 45）。
@@ -308,7 +310,7 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 
 - 两个必交视频均不超过 **30,000,000 字节**（合计 25,252,851 字节），容器 MP4、视频 H.264、音频 AAC，符合题面的推荐格式，导出后已核对可正常播放。
 - 题目二视频按题面为可选，本作品未录制，不影响提交。
-- 录制方式：题目一 `bash src/question1_project/run_q1.sh --gui`（需可用图形桌面，无图形栈时无界面模式作答一致但无法录制）；题目三在 Isaac Sim 窗口模式下录制（容器路径 `Q3_GUI=1`，需可用 DISPLAY），先验证单帧再整轮录制。视频为实际运行录屏，未用渲染探针或截图替代。
+- 录制方式：题目一 `bash src/question1_project/run_q1.sh --gui`（需可用图形桌面，无图形栈时去掉 `--gui` 作答一致但无法录制）；题目三在 Isaac Sim 原生窗口下录制：`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh --gui`（需可用 DISPLAY，先验证单帧再整轮录制）；无 Isaac Sim 时容器路径等价写法为 `Q3_GUI=1`。视频为实际运行录屏，未用渲染探针或截图替代。
 
 ### 6.2 仓库登记与提交
 
@@ -321,7 +323,7 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 
 ## 七、提交前自查
 
-- [ ] 已填写作品信息、成员分工、功能与创新点及作品版本（前三项已完成；作品版本与仓库地址需建仓推送后回填，见第一节）。
+- [X] 已填写作品信息、成员分工、功能与创新点及作品版本（前三项已完成；作品版本与仓库地址需建仓推送后回填，见第一节）。
 - [ ] 已在 AtomGit 上重新创建独立作品仓库，并按飞书作品提交表要求登记仓库链接、作品信息及评审访问权限。
 - [X] 三道题的完整源码和必要配置均放入对应的 `src/` 目录。
 - [X] 已列明依赖版本、安装方法、各题执行目录及实际启动命令（第三、四节）。

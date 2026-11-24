@@ -1,16 +1,28 @@
+[INFO] [launch]: All log files can be found below /home/moke/.ros/log/2026-11-24-18-03-53-461829-moke-Legion-2023720
+[INFO] [launch]: Default logging verbosity is set to INFO
 warning: Using load_yaml() directly is deprecated. Use xacro.load_yaml() instead.
-[INFO] [1795498822.481272275] [q1_drive]: 读取 1 个测例：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/inputs/q1_demo_input.jsonl
-[WARN] [1795498822.481947609] [q1_drive]: lift：包围盒冗余不足（机身 -0.200 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
-[WARN] [1795498822.482601437] [q1_drive]: arm：包围盒冗余不足（地面 -0.807 m < 0.05 m；机身 -0.407 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
-[WARN] [1795498822.483113591] [q1_drive]: gripper_open：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
-[WARN] [1795498822.483550926] [q1_drive]: gripper_close：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
-[INFO] [1795498822.484029113] [q1_drive]: [q1_all_seed7] lift：3.00s，净空下界：地面 0.514 m，机身 -0.200 m
-[INFO] [1795498825.504963896] [q1_drive]: [q1_all_seed7] lift 完成，保持 5.0s
-[INFO] [1795498830.511454847] [q1_drive]: [q1_all_seed7] head：3.00s，净空下界：地面 0.759 m，机身 0.044 m
-[INFO] [1795498833.533764360] [q1_drive]: [q1_all_seed7] head 完成，保持 5.0s
-[INFO] [1795498838.538859546] [q1_drive]: [q1_all_seed7] arm：3.00s，净空下界：地面 -0.807 m，机身 -0.407 m
-[INFO] [1795498841.559089663] [q1_drive]: [q1_all_seed7] arm 完成，保持 5.0s
-[INFO] [1795498846.565449830] [q1_drive]: [q1_all_seed7] gripper_open：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
-[INFO] [1795498849.587064243] [q1_drive]: [q1_all_seed7] gripper_close：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
-[INFO] [1795498852.608922891] [q1_drive]: [q1_all_seed7] 完成，5 个关键帧
-[INFO] [1795498852.613868915] [q1_drive]: 输出 1 行：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/answers/q1_demo_output.jsonl
+[INFO] [robot_state_publisher-1]: process started with pid [2023776]
+[INFO] [q1_drive-2]: process started with pid [2023777]
+[INFO] [rviz2-3]: process started with pid [2023778]
+[robot_state_publisher-1] [WARN] [1795514633.666776000] [kdl_parser]: The root link base_footprint has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-1] [INFO] [1795514633.666983959] [robot_state_publisher]: Robot initialized
+[q1_drive-2] [INFO] [1795514634.112156109] [q1_drive]: 读取 1 个测例：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/inputs/q1_demo_input.jsonl
+[q1_drive-2] [WARN] [1795514634.113171212] [q1_drive]: lift：包围盒冗余不足（机身 -0.200 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795514634.114544572] [q1_drive]: arm：包围盒冗余不足（地面 -0.807 m < 0.05 m；机身 -0.407 m < 0.02 m）��官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795514634.115475016] [q1_drive]: gripper_open：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795514634.116357629] [q1_drive]: gripper_close：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [INFO] [1795514634.117153266] [q1_drive]: [q1_all_seed7] lift：3.00s，净空下界：地面 0.514 m，机身 -0.200 m
+[rviz2-3] [INFO] [1795514634.465000997] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-3] [INFO] [1795514634.465137887] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[rviz2-3] [INFO] [1795514634.602929270] [rviz2]: Stereo is NOT SUPPORTED
+[q1_drive-2] [INFO] [1795514637.144220285] [q1_drive]: [q1_all_seed7] lift 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795514642.153066966] [q1_drive]: [q1_all_seed7] head：3.00s，净空下界：地面 0.759 m，机身 0.044 m
+[q1_drive-2] [INFO] [1795514645.176854695] [q1_drive]: [q1_all_seed7] head 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795514650.185123386] [q1_drive]: [q1_all_seed7] arm：3.00s，净空下界：地面 -0.807 m，机身 -0.407 m
+[q1_drive-2] [INFO] [1795514653.213879102] [q1_drive]: [q1_all_seed7] arm 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795514658.221476628] [q1_drive]: [q1_all_seed7] gripper_open：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
+[q1_drive-2] [INFO] [1795514661.246484104] [q1_drive]: [q1_all_seed7] gripper_close：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
+[q1_drive-2] [INFO] [1795514664.273243565] [q1_drive]: [q1_all_seed7] 完成，5 个关键帧
+[q1_drive-2] [INFO] [1795514664.273903960] [q1_drive]: 输出 1 行：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/answers/q1_demo_output.jsonl
+[INFO] [q1_drive-2]: process has finished cleanly [pid 2023777]
+[INFO] [rviz2-3]: process has finished cleanly [pid 2023778]

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# 题一：关节分步驱动。默认无界面（评审复跑用这条）；需要录 RViz 演示时加 --gui。
-#   bash src/question1_project/run_q1.sh            # 无界面，只跑驱动节点
-#   bash src/question1_project/run_q1.sh --gui      # 同时启动 RViz（需要可用的图形桌面）
+# 题一：关节分步驱动。默认无界面；加 --gui 启动 RViz 原生窗口（演示与复跑口径）。
+#   bash src/question1_project/run_q1.sh --gui      # 启动 RViz 原生窗口（需要可用的图形桌面）
+#   bash src/question1_project/run_q1.sh            # 无界面，只跑驱动节点（作答一致）
 set -euo pipefail
 
 here=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
