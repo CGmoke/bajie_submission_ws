@@ -13,6 +13,13 @@
 | [`launch/q1_rviz.launch.py`](launch/q1_rviz.launch.py)   | 一体化启动 `robot_state_publisher` + `q1_drive` + `rviz2`                  |
 | [`test/test_q1_clearance.py`](test/test_q1_clearance.py) | 预检回归测试：旧 seed 7 触地、机身间距、区间中间危险、0–127 种子全阶段          |
 | [`package.xml`](package.xml) / [`setup.py`](setup.py)   | 包元数据与入口点 `q1_drive = bajie_tasks.q1_drive:main`                        |
+| [`run_q1.sh`](run_q1.sh)                                 | 题目一入口：自动 source ROS 2、编译两个包并启动驱动节点                          |
+| [`run_all.sh`](run_all.sh)                               | 跨三题：环境自检 → 题一 → 题二 → 题三，逐题汇总退出状态                          |
+| [`run_tests.sh`](run_tests.sh)                           | 跨三题：一次跑完 58 项单元测试（5 + 8 + 45）                                     |
+| [`check_env.sh`](check_env.sh)                           | 跨三题：ROS / NumPy / SciPy / Isaac Sim / 显存 / 官方资源指纹自检                |
+| [`check_delivery.py`](check_delivery.py)                 | 跨三题：交付物自检，`--manifest` 时重生成 `assets/manifest.json`                 |
+
+跨三题的四个脚本放在本目录，是因为题一目录是 colcon 构建的起点，也包含全仓单测；位置说明见作品 README 第二节。
 
 ## 环境与依赖
 

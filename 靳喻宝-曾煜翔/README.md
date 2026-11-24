@@ -139,7 +139,7 @@ bash src/question1_project/check_env.sh          # 逐项打印 [可用] / [缺�
 
 ### 4.1 题目一 关节分步驱动与 RViz 展示
 
-**源码目录**：`src/question1_project/`。ROS 2 包 `bajie_tasks` 内含驱动节点 `q1_drive`（发布 `/joint_states`）、净空模型 `q1_safety`、launch 文件 `q1_rviz.launch.py` 与单元测试 `test/`；`bajie_robot` 为官方模型包，由脚本一并编译。
+**源码目录**：`src/question1_project/`。ROS 2 包 `bajie_tasks` 内含驱动节点 `q1_drive`（发布 `/joint_states`）、净空模型 `q1_safety`、launch 文件 `q1_rviz.launch.py` 与单元测试 `test/`；`bajie_robot` 为官方模型包，由脚本一并编译。跨三题的 `run_all.sh`、`run_tests.sh`、`check_env.sh`、`check_delivery.py` 也放在本目录（原因见第二节说明）。
 
 **输入文件**：`inputs/q1_demo_input.jsonl`，公开测例编号 `q1_all_seed7`：
 
@@ -188,7 +188,7 @@ bash src/question1_project/run_q1.sh --gui    # 同时启动 RViz 展示三维�
 
 ### 4.2 题目二 正向运动学与坐标变换
 
-**源码目录**：`src/question2_project/`：`fk.py`（URDF 解析与正向运动学）、`solve_q2.py`（命令行入口，读写 JSONL）、`verify_tf.py`（TF2 独立复核）、`test/`（单元测试）。
+**源码目录**：`src/question2_project/`：`fk.py`（URDF 解析与正向运动学）、`solve_q2.py`（命令行入口，读写 JSONL）、`verify_tf.py`（TF2 独立复核）、`tests/`（单元测试）、`src/question2_project/generated/bajie_robot.urdf`（展开后的官方模型，题二、题三共用）。
 
 **输入文件**：`inputs/q2_demo_input.jsonl`，公开测例编号 `demo_zero`，含完整 `joint_state` 与物体相对底盘的位姿 `scene_object_in_base_footprint`：
 
