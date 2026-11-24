@@ -141,13 +141,13 @@ bash src/question3_project/run_docker.sh --case rubik_cube
 
 ### 当前仿真验证
 
-连续动作改造后的整轮验证（2026-11-23，Docker GUI，[`assets/q3_logs/20261123T122937Z-53f587/run.json`](../../assets/q3_logs/20261123T122937Z-53f587/run.json)）：三例均 `outcome=contact` 且 `visible_surface=touch`，实际策略均为 `adaptive`，未触发回退；非目标接触为 0，前两例 `clearance=released`，三例接触时都弹出特写。蜘蛛侠改用 `soft_toy_press` 垂直下压，玩具被碰动 4.347 mm。整轮 144.4 s，写出 3 行作答，`exit=ok`。同版本无窗口复测（[`assets/q3_logs/20261123T061146Z-c58150/run.json`](../../assets/q3_logs/20261123T061146Z-c58150/run.json)）同为 3/3，59.8 s。
+连续动作改造后的整轮验证（2026-11-23，Docker GUI，[`assets/q3_logs/20261123T122937Z-53f587/run.json`](../../assets/q3_logs/20261123T122937Z-53f587/run.json)）：三例均 `outcome=contact` 且 `visible_surface=touch`，实际策略均为 `adaptive`，未触发回退；非目标接触为 0，前两例 `clearance=released`，三例接触时都弹出特写。软玩具改用 `soft_toy_press` 垂直下压，玩具被碰动 4.347 mm。整轮 144.4 s，写出 3 行作答，`exit=ok`。同版本无窗口复测（[`assets/q3_logs/20261123T061146Z-c58150/run.json`](../../assets/q3_logs/20261123T061146Z-c58150/run.json)）同为 3/3，59.8 s。
 
 | 测例                   | 接触指       |   分离距离 | 玩具最大位移 | 脱离       |
 | ---------------------- | ------------ | ---------: | -----------: | ---------- |
 | 魔方 `touch_toy_1`   | 右指         | −0.339 mm |     0.188 mm | released   |
 | 恐龙 `touch_toy_2`   | 左指         | −3.198 mm |     0.910 mm | released   |
-| 蜘蛛侠 `touch_toy_3` | 左指（下压） | −5.997 mm |     4.347 mm | 末例不抬升 |
+| 软玩具 `touch_toy_3` | 左指（下压） | −5.997 mm |     4.347 mm | 末例不抬升 |
 
 改造前的逐例归位验证（2026-11-23，Docker + 原生 GUI，单帧接触判定，[`assets/q3_logs/20261123T030715Z-aa8104/run.json`](../../assets/q3_logs/20261123T030715Z-aa8104/run.json)）保留备查：三例均 `outcome=contact` 且 `visible_surface=touch`，实际策略均为 `adaptive`，单次整轮 238.8 s。
 
