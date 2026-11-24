@@ -1,7 +1,7 @@
 {
-  "description": "题三作答与接触快照的对应索引。作答由 20261124T043221Z-c67f31 这一次整轮运行生成，answers/q3_demo_output.jsonl 的每一行都能在该 run 目录内找到关节值逐值一致的 contact-*.json。",
-  "generated_at_utc": "2026-11-24T04:34:30Z",
-  "authoritative_run": "20261124T043221Z-c67f31",
+  "description": "题三作答与接触快照的对应索引。作答由 20261124T102429Z-1b639e 这一次整轮运行生成，answers/q3_demo_output.jsonl 的每一行都能在该 run 目录内找到关节值逐值一致的 contact-*.json；answer_line_sha256 取该行原始文本 SHA-256 的前 16 个十六进制字符。",
+  "generated_at_utc": "2026-11-24T10:32:38Z",
+  "authoritative_run": "20261124T102429Z-1b639e",
   "tolerance": {
     "joint_rad": 1e-06,
     "pose_m": 0.002
@@ -9,55 +9,60 @@
   "cases": [
     {
       "id": "touch_toy_1",
-      "answer_line_sha256": "c165a634f1c72ddb",
+      "answer_line_sha256": "e7ddbc196a3567c0",
       "joint_identical_snapshot": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_1.json",
+        "file": "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_1.json",
         "max_joint_delta_rad": 0.0,
         "note": "同一次运行的接触快照与作答逐值一致"
       },
       "closest_by_joints": {
-        "file": "assets/q3_logs/20261123T061146Z-c58150/contact-touch_toy_1.json",
-        "max_joint_delta_rad": 0.0
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_1.json",
+        "max_joint_delta_rad": 0.0,
+        "note": "另一次整轮运行复现出相同的关节值"
       },
       "closest_by_pose": {
-        "file": "assets/q3_logs/20261123T061146Z-c58150/contact-touch_toy_1.json",
-        "max_pose_delta_m": 7.3e-07,
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_1.json",
+        "max_pose_delta_m": 1.7763568394002505e-15,
         "strategy": "adaptive",
         "visible_surface": "touch"
       }
     },
     {
       "id": "touch_toy_2",
-      "answer_line_sha256": "0d80830f04672c5f",
+      "answer_line_sha256": "e186b2c58e21194f",
       "joint_identical_snapshot": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_2.json",
-        "max_joint_delta_rad": 0.0
+        "file": "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_2.json",
+        "max_joint_delta_rad": 0.0,
+        "note": "同一次运行的接触快照与作答逐值一致"
       },
       "closest_by_joints": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_2.json",
-        "max_joint_delta_rad": 0.0
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_2.json",
+        "max_joint_delta_rad": 0.0,
+        "note": "另一次整轮运行复现出相同的关节值"
       },
       "closest_by_pose": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_2.json",
-        "max_pose_delta_m": 6.58e-07,
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_2.json",
+        "max_pose_delta_m": 1.7763568394002505e-15,
         "strategy": "adaptive",
         "visible_surface": "touch"
       }
     },
     {
       "id": "touch_toy_3",
-      "answer_line_sha256": "02fde292a493924e",
+      "answer_line_sha256": "b900ece85e6b1827",
       "joint_identical_snapshot": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_3.json",
-        "max_joint_delta_rad": 0.0
+        "file": "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_3.json",
+        "max_joint_delta_rad": 0.0,
+        "note": "同一次运行的接触快照与作答逐值一致"
       },
       "closest_by_joints": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_3.json",
-        "max_joint_delta_rad": 0.0
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_3.json",
+        "max_joint_delta_rad": 0.0,
+        "note": "另一次整轮运行复现出相同的关节值"
       },
       "closest_by_pose": {
-        "file": "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_3.json",
-        "max_pose_delta_m": 5.76e-07,
+        "file": "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_3.json",
+        "max_pose_delta_m": 1.7763568394002505e-15,
         "strategy": "adaptive",
         "visible_surface": "touch"
       }

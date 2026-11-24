@@ -27,7 +27,7 @@
 | ------------------------ | ------------------------------------------------------------------------------ | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 题目一 · 关节分步驱动   | 五阶段驱动、每阶段保持 `pause_sec`、10 关节关键帧、包围盒净空记录、RViz 展示 | 无     | 无界面实跑 1 例 5 关键帧，退出码 0；作答与官方 `q1_all_seed7` 示例十关节逐值一致，SHA-256 `6e7db6ba…dc2081`；RViz 实录见 `video/q1_rviz.mp4`               |
 | 题目二 · 正向运动学     | URDF 关节链正解、两组位姿输出、TF2 独立复核、单元测试                          | 无     | 正式测例 1 例求解通过；`--verify` 三组复核误差均 < 1e-15（阈值 1e-8 m / 1e-7 rad）；跨自研与 TF2 的位姿链复算误差 0.0 m                                         |
-| 题目三 · Isaac Sim 触碰 | 场景加载、ROS 2 Bridge、三例连续触碰、接触证据留档、作答原子写入               | 无     | 整轮三例 `outcome=contact`、`visible_surface=touch`，`exit=ok`、`written_rows=3`（run `20261124T043221Z-c67f31`，77.8 s）；作答与接触快照关节值逐值一致 |
+| 题目三 · Isaac Sim 触碰 | 场景加载、ROS 2 Bridge、三例连续触碰、接触证据留档、作答原子写入               | 无     | 整轮三例 `outcome=contact`、`visible_surface=touch`，`exit=ok`、`written_rows=3`（run `20261124T102429Z-1b639e`，GUI 整轮 151.0 s）；作答与接触快照关节值逐值一致 |
 
 **运行限制（如实说明）**：
 
@@ -265,7 +265,7 @@ Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 
 原生路径需要 `export ISAAC_PATH=<Isaac Sim 4.5 安装根目录>`（该目录须含 `python.sh` 与 `exts/`），首次无头启动建议同时 `export ACCEPT_EULA=Y PRIVACY_CONSENT=Y`。`--gui` 打开 Isaac Sim 原生窗口，需要可用的 `DISPLAY`；没有图形桌面时去掉 `--gui` 走无界面模式，接触判定与作答完全一致。启动器自动定位 Isaac Sim、`source` ROS 2 Humble、预检内存与显存，超时自动终止（单例 600 s、整轮 1800 s，可用 `Q3_TIMEOUT` 覆盖）。默认策略 `adaptive-fallback`，日志逐例标注实际生效的 `strategy=`。**预期完成标志**：末尾出现 `run_finish exit=ok written_rows=3`，三例均 `outcome=contact`、`visible_surface=touch`，作答 3 行。实测整轮 77.8 s（着色器缓存已热）。
 
-**验收与演示**：仿真里能看到三例各自的触碰过程，作答与运行记录对得上。本次提交的作答出自 `20261124T043221Z-c67f31` 这一次整轮运行（`exit=ok`、`written_rows=3`、`misses=[]`），run 目录里的 `run.json` 和 3 份 `contact-*.json` 就是同源证据，逐例对应关系见 `assets/q3_evidence_index.json`。三例作答的关节值与接触快照逐值一致，偏差 0.0 rad；从快照三方位姿反算出来的作答位姿，与文件相差不到 1e-15 m。完整终端日志见 `assets/q3_docker_run.log`，Isaac Sim 触碰视频见 `video/q3_touch.mp4`。
+**验收与演示**：仿真里能看到三例各自的触碰过程，作答与运行记录对得上。本次提交的作答出自 `20261124T102429Z-1b639e` 这一次整轮运行（`exit=ok`、`written_rows=3`、`misses=[]`），run 目录里的 `run.json` 和 3 份 `contact-*.json` 就是同源证据，逐例对应关系见 `assets/q3_evidence_index.json`。三例作答的关节值与接触快照逐值一致，偏差 0.0 rad；从快照三方位姿反算出来的作答位姿，与文件相差不到 2e-15 m。该次整轮的结构化日志见 `assets/q3_logs/20261124T102429Z-1b639e/`（早期 docker 整轮终端日志另见 `assets/q3_docker_run.log`），Isaac Sim 触碰视频见 `video/q3_touch.mp4`。
 
 ## 五、作答格式与单位
 
@@ -282,7 +282,7 @@ Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 | 题目二 | `id`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`（各含 `xyz` / `rpy` / `quat_xyzw`） |
 | 题目三 | `id`、`final_joint_state`、`objects_link_in_base_footprint`、`scene_object_in_objects_link`                    |
 
-- 当前三份作答的 SHA-256：`answers/q1_demo_output.jsonl` = `6e7db6baf7f1f5a2…9fdc2081`，`answers/q2_demo_output.jsonl` = `98fd3d8092265eef…42474cc37`，`answers/q3_demo_output.jsonl` = `4a404ccd046cc88a…1a1916dd`（完整值见 `assets/manifest.json`）。
+- 当前三份作答的 SHA-256：`answers/q1_demo_output.jsonl` = `6e7db6baf7f1f5a2…9fdc2081`，`answers/q2_demo_output.jsonl` = `98fd3d8092265eef…42474cc37`，`answers/q3_demo_output.jsonl` = `374922903c427b31…6c6dd921`（完整值见 `assets/manifest.json`）。
 - 题目三的玩具位姿为**接触时刻的实测值**，不是输入的初始位姿：玩具被碰到后本身会位移（日志记 `max_toy_shift_mm` 0.15~1.61 mm），这一点在核对时需注意。
 
 ## 六、复现步骤与材料
@@ -306,9 +306,9 @@ python3 src/question1_project/check_delivery.py --manifest assets/manifest.json 
 | 文件                   | 对应题目 | 内容                                           | 规格                                                                             |
 | ---------------------- | -------- | ---------------------------------------------- | -------------------------------------------------------------------------------- |
 | `video/q1_rviz.mp4`  | 题目一   | RViz 内完整展示五个阶段的关节驱动              | 32.6 s，976×720，25 fps，H.264 + AAC，888,772 字节（0.89 MB）                   |
-| `video/q3_touch.mp4` | 题目三   | Isaac Sim 4.5 内魔方、恐龙、软玩具三例触碰实录 | 3 min 35 s（214.6 s），832×544，25 fps，H.264 + AAC，24,364,079 字节（24.4 MB） |
+| `video/q3_touch.mp4` | 题目三   | Isaac Sim 4.5 内魔方、恐龙、软玩具三例触碰实录 | 2 min 10 s（129.6 s），1104×720，30 fps，H.264 + AAC，24,723,064 字节（24.7 MB） |
 
-- 两个必交视频均不超过 **30,000,000 字节**（合计 25,252,851 字节），容器 MP4、视频 H.264、音频 AAC，符合题面的推荐格式，导出后已核对可正常播放。
+- 两个必交视频均不超过 **30,000,000 字节**（合计 25,611,836 字节），容器 MP4、视频 H.264、音频 AAC，符合题面的推荐格式，导出后已核对可正常播放。
 - 题目二视频按题面为可选，本作品未录制，不影响提交。
 - 录制方式：题目一 `bash src/question1_project/run_q1.sh --gui`（需可用图形桌面，无图形栈时去掉 `--gui` 作答一致但无法录制）；题目三在 Isaac Sim 原生窗口下录制：`Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_q3.sh --gui`（需可用 DISPLAY，先验证单帧再整轮录制）；无 Isaac Sim 时容器路径等价写法为 `Q3_GUI=1`。视频为实际运行录屏，未用渲染探针或截图替代。
 

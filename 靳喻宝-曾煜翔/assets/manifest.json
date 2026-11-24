@@ -1,6 +1,6 @@
 {
   "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
-  "generated_at_utc": "2026-11-24T09:19:23Z",
+  "generated_at_utc": "2026-11-24T10:33:40Z",
   "official_assets": {
     "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
       "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
@@ -21,20 +21,20 @@
       "sha256": "98fd3d8092265eef657c84ffa06daa4e2f82e695769788961ee401b42474cc37"
     },
     "answers/q3_demo_output.jsonl": {
-      "bytes": 2839,
-      "sha256": "4a404ccd046cc88ac8548e31e4ed712e4fa2f262281b76605f850e3e1a1916dd"
+      "bytes": 2833,
+      "sha256": "374922903c427b311da618197845e0d867d9a986bbf991846ba6dbea6c6dd921"
     },
     "assets/q1_run.log": {
-      "bytes": 2064,
-      "sha256": "fcf2e057bd49f5e526f6a777c8886fdb93e0ee1263f806918db1858a06f2a01c"
+      "bytes": 3320,
+      "sha256": "addfb3d59f7eb943f2be3b72e921cb2d6309eed47685d46242d40eac97eb375a"
     },
     "assets/q2_humble_verify.log": {
       "bytes": 5230,
       "sha256": "2ebdc61d182a1e239ccefefff167b077a55293b6832c1865a6a7aea50452391f"
     },
     "assets/q2_run.log": {
-      "bytes": 1041,
-      "sha256": "ef115e5bb5862de344704eb2af24f0b0f8b0c1b6af031c0b422fea192c83b4e9"
+      "bytes": 1063,
+      "sha256": "258cc3f5d66c3fca7242c7402c83f2e9fc4d142184f694140d8a0eee12a93c02"
     },
     "assets/q3_docker_run.log": {
       "bytes": 418491,
@@ -108,17 +108,65 @@
       "bytes": 2769,
       "sha256": "6c541bf20f81a5b5d95014d6f0c572569c8d27e7efe778721cffb6a70a191a57"
     },
+    "assets/q3_logs/20261124T100807Z-57d532/contact-touch_toy_1.json": {
+      "bytes": 1738,
+      "sha256": "ee6b3cf05dd1bb792aead38f5f27f3a7ca7b754be5da1bb21c7c5303b1e88f2c"
+    },
+    "assets/q3_logs/20261124T100807Z-57d532/contact-touch_toy_2.json": {
+      "bytes": 1744,
+      "sha256": "9daaa7b9996d53d3249afeae5f4f7839d7eda54b51081390b6f126ac95d49f29"
+    },
+    "assets/q3_logs/20261124T100807Z-57d532/contact-touch_toy_3.json": {
+      "bytes": 1740,
+      "sha256": "727bb37271f25308ad5b97e26ef9726ccb27a1b8fe10008a55c27d11420c8ab7"
+    },
+    "assets/q3_logs/20261124T100807Z-57d532/run.json": {
+      "bytes": 2765,
+      "sha256": "e911dfb29ab0a3533651808482fa6c12e6276593edbda27f924c46bd2702b6e4"
+    },
+    "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_1.json": {
+      "bytes": 1734,
+      "sha256": "a9aaa0b20dbeddf913980f9da8585f59c75bdad5454262ae58a285f7aa51b9f5"
+    },
+    "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_2.json": {
+      "bytes": 1740,
+      "sha256": "6c17b38970fde7f933f0c1980b4e2d0eaffdb33a89adc736af4aa54585402a52"
+    },
+    "assets/q3_logs/20261124T101756Z-566777/contact-touch_toy_3.json": {
+      "bytes": 1745,
+      "sha256": "69135662e957b56e8292d9a71008ce510889b329b229a0d9dd4c833a0dcb91db"
+    },
+    "assets/q3_logs/20261124T101756Z-566777/run.json": {
+      "bytes": 2761,
+      "sha256": "db8a1cd9b06d4948f876851afa4cce7315b37d21eec4f56449f930f2833d729e"
+    },
+    "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_1.json": {
+      "bytes": 1734,
+      "sha256": "0d0eb835ad6f8af3651bbc3aca3c47cb492a7ea2381074ae8836f50624fd7de2"
+    },
+    "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_2.json": {
+      "bytes": 1739,
+      "sha256": "21625d1920c9d72cfbd941612d826b83066fa26f32d7476fb593107b0dfe5c8b"
+    },
+    "assets/q3_logs/20261124T102429Z-1b639e/contact-touch_toy_3.json": {
+      "bytes": 1744,
+      "sha256": "a1545129fd11c905e4603b563094b3a48d698a7e9e8fc7327578f37093abccad"
+    },
+    "assets/q3_logs/20261124T102429Z-1b639e/run.json": {
+      "bytes": 2761,
+      "sha256": "5e316167f204e626d5b7619e6d3fcfd39424f923eefe737656474f2f01bdd9eb"
+    },
     "video/README.md": {
-      "bytes": 1537,
-      "sha256": "b76436e104f601fdac2ec6e10cf846e5504bbc4fc713a944a60a15da3bc4281e"
+      "bytes": 1557,
+      "sha256": "76f4adff39c0fceb9352ef12393b646bdb61412524bea03c2f91126eb7cb2d9d"
     },
     "video/q1_rviz.mp4": {
       "bytes": 888772,
       "sha256": "ddd393eb1a7d785ba5dfe944f0c2dfdc96643acd1fca42c2f79798bc33a3f928"
     },
     "video/q3_touch.mp4": {
-      "bytes": 24364079,
-      "sha256": "c2905a5897188f633c604f3279eba0991a03137410de57cbda123a02c0407a5c"
+      "bytes": 24723064,
+      "sha256": "6e09053d565ec2ffff77deff578b6d136ca7c1ebe42ccaa1e9ea371fabd7655a"
     },
     "inputs/q1_demo_input.jsonl": {
       "bytes": 84,
@@ -242,7 +290,7 @@
     },
     "src/question3_project/touch.py": {
       "bytes": 41017,
-      "sha256": "0569891277b52d1a891ca4cfcc34e78378a637b63e329ddadbad03d96f5691f1"
+      "sha256": "3f80e52d8d4c938c41218ee41d2ac5dfe80c20fbda2a32a782b77583629bd11c"
     },
     "src/question3_project/run_docker.sh": {
       "bytes": 10824,
