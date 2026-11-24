@@ -1,6 +1,6 @@
 {
   "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
-  "generated_at_utc": "2026-11-24T05:10:40Z",
+  "generated_at_utc": "2026-11-24T05:54:07Z",
   "official_assets": {
     "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
       "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
@@ -24,21 +24,17 @@
       "bytes": 2839,
       "sha256": "4a404ccd046cc88ac8548e31e4ed712e4fa2f262281b76605f850e3e1a1916dd"
     },
-    "assets/q1_humble_headless.log": {
-      "bytes": 1883,
-      "sha256": "487650451a75a7e3ea6187a9bd1dcb93df5e0c9bec4ec5762dcb2512fdbd0745"
-    },
     "assets/q1_run.log": {
-      "bytes": 3277,
-      "sha256": "b17f4d2d91bb153ae16223713954d2d449f1719241838d8bc02c4089f12f7cd8"
+      "bytes": 2064,
+      "sha256": "fcf2e057bd49f5e526f6a777c8886fdb93e0ee1263f806918db1858a06f2a01c"
     },
     "assets/q2_humble_verify.log": {
       "bytes": 5230,
       "sha256": "2ebdc61d182a1e239ccefefff167b077a55293b6832c1865a6a7aea50452391f"
     },
     "assets/q2_run.log": {
-      "bytes": 981,
-      "sha256": "8966b625997792b65b5fef5ab873dcab2a34acc5cfb81707bc8c286b2005ccee"
+      "bytes": 1041,
+      "sha256": "ef115e5bb5862de344704eb2af24f0b0f8b0c1b6af031c0b422fea192c83b4e9"
     },
     "assets/q3_docker_run.log": {
       "bytes": 418491,
@@ -113,8 +109,8 @@
       "sha256": "6c541bf20f81a5b5d95014d6f0c572569c8d27e7efe778721cffb6a70a191a57"
     },
     "video/README.md": {
-      "bytes": 1516,
-      "sha256": "e2ba85b0e8ae32673535994b86ca3f8b8ee03fa09c42028ac5faaebe80a168a2"
+      "bytes": 1515,
+      "sha256": "4f428a09a8f8ae98ac71737b34a5a8de7c2b251b595d435cfa146be037c41a83"
     },
     "video/q1_rviz.mp4": {
       "bytes": 888772,
