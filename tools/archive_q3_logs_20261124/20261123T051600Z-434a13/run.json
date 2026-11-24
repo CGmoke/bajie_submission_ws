@@ -1,0 +1,59 @@
+{
+  "run": "20261123T051600Z-434a13",
+  "started_utc": "2026-11-23T05:16:00Z",
+  "finished_utc": "2026-11-23T05:20:47Z",
+  "duration_s": 286.943,
+  "exit": "ok",
+  "cases": [
+    {
+      "id": "touch_toy_1",
+      "strategy": "adaptive",
+      "outcome": "contact",
+      "phase": "touch",
+      "command_steps": 879,
+      "max_toy_shift_mm": 0.197,
+      "non_target_steps": 0,
+      "closest_positive_gap_mm": 0.000994,
+      "visible_surface": "touch",
+      "stable_contact_frames": 6,
+      "contact_corrections": 0,
+      "detail": "contact=('/World/abr_machine/robot_root/gripper/gripper_right_link', '/World/company/toys/Rubik', [12.66592788696289, 5.540173053741455, 0.05731514096260071], -0.0003404760791454464, 0.02586742531371463) actual=[0.0, 0.0, -0.6599599719047546, 0.23607000708580017, 1.6272799968719482, 1.343369960784912, -0.680649995803833, 1.8596299886703491, 0.3670800030231476, 0.3670800030231476]",
+      "contact_file": "contact-touch_toy_1.json"
+    },
+    {
+      "id": "touch_toy_2",
+      "strategy": "adaptive",
+      "outcome": "contact",
+      "phase": "touch",
+      "command_steps": 672,
+      "max_toy_shift_mm": 0.86,
+      "non_target_steps": 0,
+      "closest_positive_gap_mm": 0.000479,
+      "visible_surface": "touch",
+      "stable_contact_frames": 6,
+      "contact_corrections": 0,
+      "detail": "contact=('/World/abr_machine/robot_root/gripper/gripper_left_link', '/World/company/toys/toy_yellow_dragon', [12.682393074035645, 5.39516019821167, 0.08091817796230316], -0.003016557078808546, 0.4897859421970606) actual=[9.999999747378752e-06, 0.0, -0.30121999979019165, 0.5536100268363953, 1.9098000526428223, 0.9745299816131592, -0.3671500086784363, -0.6705700159072876, 0.3492099940776825, 0.3492400050163269]",
+      "contact_file": "contact-touch_toy_2.json"
+    },
+    {
+      "id": "touch_toy_3",
+      "strategy": "adaptive",
+      "outcome": "contact",
+      "phase": "touch",
+      "command_steps": 665,
+      "max_toy_shift_mm": 0.188,
+      "non_target_steps": 0,
+      "closest_positive_gap_mm": 0.000433,
+      "visible_surface": "touch",
+      "stable_contact_frames": 6,
+      "contact_corrections": 0,
+      "detail": "contact=('/World/abr_machine/robot_root/gripper/gripper_right_link', '/World/company/toys/spiderman_grasp', [12.673553466796875, 5.177570819854736, 0.10244959592819214], -6.161486908240477e-06, 0.00024220469561546238) actual=[0.0, 0.0, 0.3403699994087219, 0.6110100150108337, 1.9725600481033325, -0.3635300099849701, -0.22258999943733215, 0.35523998737335205, 0.4177300035953522, 0.41773998737335205]",
+      "contact_file": "contact-touch_toy_3.json"
+    }
+  ],
+  "written_rows": 3,
+  "misses": [],
+  "output": "/result/q3_demo_output.jsonl",
+  "strategy": "adaptive-fallback",
+  "gui": true
+}

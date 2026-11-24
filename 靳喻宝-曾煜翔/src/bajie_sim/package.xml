@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!--
+  colcon shim：官方 ecovacs-bajie-sim 仓库是纯资源包（没有 package.xml），
+  直接放进 src/ 不会被 colcon 识别。本文件由 scripts/sync_official.sh 复制进
+  src/bajie_sim/ 与 bajie-demo/src/bajie_sim/，只做一件事：把资源目录装进
+  share/bajie_sim/，让 $(ros2 pkg prefix bajie_sim)/share/bajie_sim/scene/... 可用。
+  上游若将来自带 package.xml，本 shim 会被自动跳过（见同步脚本）。
+-->
+<package format="3">
+  <name>bajie_sim</name>
+  <version>0.0.0</version>
+  <description>官方 Isaac Sim 仿真资源（scene / machine / models / scripts）的 colcon 包装</description>
+  <maintainer email="alben.cui@ecovacs.com">alben</maintainer>
+  <license>TODO: License declaration</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

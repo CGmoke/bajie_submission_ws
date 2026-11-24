@@ -1,0 +1,244 @@
+{
+  "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
+  "generated_at_utc": "2026-11-24T04:34:38Z",
+  "official_assets": {
+    "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
+      "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
+      "actual_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49"
+    },
+    "src/bajie_sim/scene/abr_scene.usd": {
+      "expected_sha256": "42d9882469651205dc590d51f5c02b15eb52d29b6424bd0983a11f2743628735",
+      "actual_sha256": "42d9882469651205dc590d51f5c02b15eb52d29b6424bd0983a11f2743628735"
+    }
+  },
+  "files": {
+    "answers/q1_demo_output.jsonl": {
+      "bytes": 1411,
+      "sha256": "6e7db6baf7f1f5a278f4724205b525a5e92f21a7a1fa5cd6bb5ae8439fdc2081"
+    },
+    "answers/q2_demo_output.jsonl": {
+      "bytes": 574,
+      "sha256": "98fd3d8092265eef657c84ffa06daa4e2f82e695769788961ee401b42474cc37"
+    },
+    "answers/q3_demo_output.jsonl": {
+      "bytes": 2839,
+      "sha256": "4a404ccd046cc88ac8548e31e4ed712e4fa2f262281b76605f850e3e1a1916dd"
+    },
+    "assets/q1_humble_headless.log": {
+      "bytes": 1883,
+      "sha256": "487650451a75a7e3ea6187a9bd1dcb93df5e0c9bec4ec5762dcb2512fdbd0745"
+    },
+    "assets/q1_run.log": {
+      "bytes": 3277,
+      "sha256": "b17f4d2d91bb153ae16223713954d2d449f1719241838d8bc02c4089f12f7cd8"
+    },
+    "assets/q2_humble_verify.log": {
+      "bytes": 5230,
+      "sha256": "2ebdc61d182a1e239ccefefff167b077a55293b6832c1865a6a7aea50452391f"
+    },
+    "assets/q2_run.log": {
+      "bytes": 981,
+      "sha256": "8966b625997792b65b5fef5ab873dcab2a34acc5cfb81707bc8c286b2005ccee"
+    },
+    "assets/q3_docker_run.log": {
+      "bytes": 418491,
+      "sha256": "9a842b8e6af183a12a6efae968a311fb2ff2b2f038b8c918eddfd156fa312d78"
+    },
+    "assets/q3_run.log": {
+      "bytes": 178903,
+      "sha256": "0b1bfa623ff96535901363648bc3fbbf66b08906c6eae22c626e4a259a9fe133"
+    },
+    "assets/q3_logs/20261123T030715Z-aa8104/contact-touch_toy_1.json": {
+      "bytes": 1679,
+      "sha256": "4570ee676f1d9567d51ce1e8b13dda3648df46853589692672296e1c81852126"
+    },
+    "assets/q3_logs/20261123T030715Z-aa8104/contact-touch_toy_2.json": {
+      "bytes": 1682,
+      "sha256": "9a4c97508f384e22bfa81dd2867b7792774779da8ec9b86d9100f24735c22159"
+    },
+    "assets/q3_logs/20261123T030715Z-aa8104/contact-touch_toy_3.json": {
+      "bytes": 1684,
+      "sha256": "4a4695e0656b137a90e9753fdcb1c9244136bdc74b12bd8a6cddb5234470546b"
+    },
+    "assets/q3_logs/20261123T030715Z-aa8104/run.json": {
+      "bytes": 2547,
+      "sha256": "19966066093cb427d421637eb98daf6264bb2343827c090a2302b7131ec5a047"
+    },
+    "assets/q3_logs/20261123T061146Z-c58150/contact-touch_toy_1.json": {
+      "bytes": 1739,
+      "sha256": "6aaafb79ba1b5d70791181f1a8c8b19004c1175dc9fb099081e16996fd0fd551"
+    },
+    "assets/q3_logs/20261123T061146Z-c58150/contact-touch_toy_2.json": {
+      "bytes": 1731,
+      "sha256": "191a5e460147703a5ea9e5d5683e22c89252b98f5003e883a21dc868946ad6cf"
+    },
+    "assets/q3_logs/20261123T061146Z-c58150/contact-touch_toy_3.json": {
+      "bytes": 1748,
+      "sha256": "222b27a296463afcfe5e0e2b1873ce94ccdf999d264fb3b07096a688b68d757d"
+    },
+    "assets/q3_logs/20261123T061146Z-c58150/run.json": {
+      "bytes": 2769,
+      "sha256": "6a92d32fab7f5a2c4ebc07f46dfe4eaa9c55f2d29d1d0ba49bccd07837b4d2de"
+    },
+    "assets/q3_logs/20261123T122937Z-53f587/contact-touch_toy_1.json": {
+      "bytes": 1740,
+      "sha256": "4d80600ac6483da2f316562b6e7874bdad85579245fcc433a18d4cc7473424b4"
+    },
+    "assets/q3_logs/20261123T122937Z-53f587/contact-touch_toy_2.json": {
+      "bytes": 1730,
+      "sha256": "ac6a54a54b9defdb93ef1d9a98ee92b30d9230a9413e8f9c8074c9e4b866f720"
+    },
+    "assets/q3_logs/20261123T122937Z-53f587/contact-touch_toy_3.json": {
+      "bytes": 1737,
+      "sha256": "df53ecfc51a1adb3ad88b195d39481c4638d36b30a9e52e74299f02ab7cec2c0"
+    },
+    "assets/q3_logs/20261123T122937Z-53f587/run.json": {
+      "bytes": 2782,
+      "sha256": "653231eb65bfb0912ea6b01e7102da27f1d5729da5f72ca8efc0e74eeabb9bf5"
+    },
+    "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_1.json": {
+      "bytes": 1739,
+      "sha256": "573eb458dc441d7bc4e120c993bdb90ab957933e3f98d5b8274b1e022cb1be1c"
+    },
+    "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_2.json": {
+      "bytes": 1738,
+      "sha256": "26da62ab14de997cd05ce54508d085f1aff49e03a49a4a7d7a94ba426be24ad1"
+    },
+    "assets/q3_logs/20261124T043221Z-c67f31/contact-touch_toy_3.json": {
+      "bytes": 1747,
+      "sha256": "903d2ec39fe205c3cc79674b8543fb6c3cc9f5afb0acc5e42dfa6442c0518613"
+    },
+    "assets/q3_logs/20261124T043221Z-c67f31/run.json": {
+      "bytes": 2769,
+      "sha256": "6c541bf20f81a5b5d95014d6f0c572569c8d27e7efe778721cffb6a70a191a57"
+    },
+    "video/README.md": {
+      "bytes": 1516,
+      "sha256": "e2ba85b0e8ae32673535994b86ca3f8b8ee03fa09c42028ac5faaebe80a168a2"
+    },
+    "video/q1_rviz.mp4": {
+      "bytes": 888772,
+      "sha256": "ddd393eb1a7d785ba5dfe944f0c2dfdc96643acd1fca42c2f79798bc33a3f928"
+    },
+    "video/q3_touch.mp4": {
+      "bytes": 24364079,
+      "sha256": "c2905a5897188f633c604f3279eba0991a03137410de57cbda123a02c0407a5c"
+    },
+    "inputs/q1_demo_input.jsonl": {
+      "bytes": 84,
+      "sha256": "2756d2da5da049538cc317c4f7f787a3dc80ccdae135a7e83a66a814126ca8a8"
+    },
+    "inputs/q2_demo_input.jsonl": {
+      "bytes": 303,
+      "sha256": "ec5884dba4a36bfebabf6091197634cbb80222b538bd40df0f37c8bc2774cc81"
+    },
+    "inputs/q3_demo_input.jsonl": {
+      "bytes": 1373,
+      "sha256": "14544ecb77e1be962a4eba6f5c4471ce8e26dabfc0a9e2c655db51f45ee37489"
+    },
+    "src/question1_project/bajie_tasks/__init__.py": {
+      "bytes": 37,
+      "sha256": "cfc9e03e1b948039201948d572342f7ea49a48b79e5af9ef19ed02adb330ee77"
+    },
+    "src/question1_project/bajie_tasks/q1_drive.py": {
+      "bytes": 10648,
+      "sha256": "84d2fd0b4b393a959f3243fb242138ff796c32ed1e7f74532f115108a9e4e5b8"
+    },
+    "src/question1_project/bajie_tasks/q1_safety.py": {
+      "bytes": 9572,
+      "sha256": "bfb854fa7f6857fe5610be8f8a273b8f80189c725b665b8784bf2f6d1e9335cc"
+    },
+    "src/question1_project/launch/q1_rviz.launch.py": {
+      "bytes": 2145,
+      "sha256": "940261a31bb3387695f79d3e59d46f31cb891c4183e6b17c54ac75ac54f7da4a"
+    },
+    "src/question1_project/setup.py": {
+      "bytes": 773,
+      "sha256": "f5b8f59ed9dc0d993dbe2b4b4361e90bfdd16e3bf43d0ff7548faef7c2bff8e3"
+    },
+    "src/question1_project/test/test_q1_clearance.py": {
+      "bytes": 3865,
+      "sha256": "6875b7ae13965a872d813d0bebcedcb069a581743b403707c1bd27795e86556c"
+    },
+    "src/question2_project/fk.py": {
+      "bytes": 6906,
+      "sha256": "40d0f4eb4f60979b54537d7329c918325d8cce8ab86093fb9beba561172c0861"
+    },
+    "src/question2_project/solve_q2.py": {
+      "bytes": 3536,
+      "sha256": "2e95f7d7114b4ffb08a85fcc42ffe10461032e4b5d10956c52ea644c0915d375"
+    },
+    "src/question2_project/tests/test_q2.py": {
+      "bytes": 6812,
+      "sha256": "d6cb4613cb5bb6038ae641ffe5800a8b61652bb3459c11c0ea42fa4040b23042"
+    },
+    "src/question2_project/verify_tf.py": {
+      "bytes": 7292,
+      "sha256": "7206f19b6c0cfc9d19805d5d4c493d8534f1fa9520be4884029c77ec470de5b1"
+    },
+    "src/question3_project/bridge.py": {
+      "bytes": 2492,
+      "sha256": "efbefb3c38a4b1bdc990ad15c2f23ab288bfa09eb2acfb2d8806264e644ab690"
+    },
+    "src/question3_project/bridge_probe.py": {
+      "bytes": 5516,
+      "sha256": "99fea30cb2dc20aa31f060af16794b5f8629732370d6d2d0fd38b7b276bc9db8"
+    },
+    "src/question3_project/journal.py": {
+      "bytes": 9631,
+      "sha256": "28ef32775c40087ddfd728063cee08a846fb520e089a53f997f326f79ff90909"
+    },
+    "src/question3_project/run_touch.py": {
+      "bytes": 32545,
+      "sha256": "4bb131f231d9398635da07afe7100e6f67bd336f8f486a866be26a30639f44bc"
+    },
+    "src/question3_project/surface.py": {
+      "bytes": 3796,
+      "sha256": "7bc748cf06d882e217bb7861ad653dc6b925efb30e65c0ec8b9832ec1f3d76fb"
+    },
+    "src/question3_project/tests/test_adaptive_touch.py": {
+      "bytes": 14536,
+      "sha256": "bc585859cf7a5fc878c2a9b210b9efa0e0cd89d73549d0c7b93835b6ceba67df"
+    },
+    "src/question3_project/tests/test_clearance.py": {
+      "bytes": 2804,
+      "sha256": "0dd33d0306c33040a459a09e75511c4ea44894f95bbff1cdb304b6043de20bbd"
+    },
+    "src/question3_project/tests/test_contact_hold.py": {
+      "bytes": 4477,
+      "sha256": "e4719b34396351e12f57ce85b10072966d66c9be9a6e79167f2f037ebf5bc148"
+    },
+    "src/question3_project/tests/test_journal.py": {
+      "bytes": 4747,
+      "sha256": "be59206d3c9ba0d4c73737a8f8f4ba328980af0736ac6914c82798795b01d2ec"
+    },
+    "src/question3_project/tests/test_touch.py": {
+      "bytes": 1949,
+      "sha256": "588781ed7b276b3141b68dbc6de642e17b849a359649f0f8141907110c153a22"
+    },
+    "src/question3_project/tests/test_visible_surface.py": {
+      "bytes": 930,
+      "sha256": "58f642893e9a40b0ebde84930340f3b42c91a71179ea55493101e0ae78dd09f0"
+    },
+    "src/question3_project/touch.py": {
+      "bytes": 41017,
+      "sha256": "0569891277b52d1a891ca4cfcc34e78378a637b63e329ddadbad03d96f5691f1"
+    },
+    "src/question3_project/run_docker.sh": {
+      "bytes": 10780,
+      "sha256": "56058974d9e1e5b0915e0fceb3d8f0c93e234c5855be814d3049fb947d7c8a6a"
+    },
+    "src/question3_project/run_q3.sh": {
+      "bytes": 9521,
+      "sha256": "5502d85bda740a0b5c87cf0962a1ee9b5a32c6bb1f8eb4c9bc2fe70bdb1d7c54"
+    },
+    "src/question3_project/physics.kit": {
+      "bytes": 363,
+      "sha256": "333efb4432e424681ee4dfd0b28878c9187a37de1e3d73d1149099adbaa344b3"
+    },
+    "generated/bajie_robot.urdf": {
+      "bytes": 30527,
+      "sha256": "f55d61e668c8f6d30d6792b7fdebac02884babe3b956d729763bf0a68b89046f"
+    }
+  }
+}

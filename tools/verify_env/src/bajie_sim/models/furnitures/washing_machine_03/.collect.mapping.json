@@ -1,0 +1,17 @@
+{
+    "version": "1.0",
+    "file_records": [
+        {
+            "source_url": "/home/xiaolinli/Documents/codes/ecovacs/IsaacLab_eco/isaaclab_eco/lab_assets/assets/washer/textures/Baraban.jpg",
+            "source_hash": "e0118fc6dba6fb78d44d8e0460295db99dc7ae6a",
+            "target_url": "./SubUSDs/textures/Baraban.jpg",
+            "target_hash": "8602e2a8d261883e85d6104df965d1899fce313b"
+        },
+        {
+            "source_url": "/home/xiaolinli/Documents/codes/ecovacs/IsaacLab_eco/isaaclab_eco/lab_assets/assets/washer/washing_machine_03.usd",
+            "source_hash": "cb677acfa00e18db3dd83bbb8991705902a348fb",
+            "target_url": "./washing_machine_03.usd",
+            "target_hash": "44e04463f579560796f7362e55d2ec74209352e5"
+        }
+    ]
+}

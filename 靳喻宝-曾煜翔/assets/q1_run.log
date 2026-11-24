@@ -1,0 +1,28 @@
+[INFO] [launch]: All log files can be found below /home/moke/.ros/log/2026-11-24-13-16-46-177210-moke-Legion-1532844
+[INFO] [launch]: Default logging verbosity is set to INFO
+warning: Using load_yaml() directly is deprecated. Use xacro.load_yaml() instead.
+[INFO] [robot_state_publisher-1]: process started with pid [1532855]
+[INFO] [q1_drive-2]: process started with pid [1532856]
+[INFO] [rviz2-3]: process started with pid [1532857]
+[robot_state_publisher-1] [WARN] [1795497406.345889421] [kdl_parser]: The root link base_footprint has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-1] [INFO] [1795497406.346012119] [robot_state_publisher]: Robot initialized
+[q1_drive-2] [INFO] [1795497406.746932847] [q1_drive]: 读取 1 个测例：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/inputs/q1_demo_input.jsonl
+[q1_drive-2] [WARN] [1795497406.748173300] [q1_drive]: lift：包围盒冗余不足（机身 -0.200 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795497406.749158398] [q1_drive]: arm：包围盒冗余不足（地面 -0.807 m < 0.05 m；机身 -0.407 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795497406.749781287] [q1_drive]: gripper_open：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [WARN] [1795497406.750683247] [q1_drive]: gripper_close：包围盒冗余不足（地面 -0.070 m < 0.05 m；机身 0.006 m < 0.02 m），官方 seed=7 示例位姿同属此情形，仅记录不阻断
+[q1_drive-2] [INFO] [1795497406.751398014] [q1_drive]: [q1_all_seed7] lift：3.00s，净空下界：地面 0.514 m，机身 -0.200 m
+[rviz2-3] [INFO] [1795497406.935871686] [rviz2]: Stereo is NOT SUPPORTED
+[rviz2-3] [INFO] [1795497406.935993128] [rviz2]: OpenGl version: 4.6 (GLSL 4.6)
+[rviz2-3] [INFO] [1795497406.971825461] [rviz2]: Stereo is NOT SUPPORTED
+[q1_drive-2] [INFO] [1795497409.776059052] [q1_drive]: [q1_all_seed7] lift 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795497414.784307612] [q1_drive]: [q1_all_seed7] head：3.00s，净空下界：地面 0.759 m，机身 0.044 m
+[q1_drive-2] [INFO] [1795497417.809389992] [q1_drive]: [q1_all_seed7] head 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795497422.815117031] [q1_drive]: [q1_all_seed7] arm：3.00s，净空下界：地面 -0.807 m，机身 -0.407 m
+[q1_drive-2] [INFO] [1795497425.839728957] [q1_drive]: [q1_all_seed7] arm 完成，保持 5.0s
+[q1_drive-2] [INFO] [1795497430.848349876] [q1_drive]: [q1_all_seed7] gripper_open：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
+[q1_drive-2] [INFO] [1795497433.871025253] [q1_drive]: [q1_all_seed7] gripper_close：3.00s，净空下界：地面 -0.070 m，机身 0.006 m
+[q1_drive-2] [INFO] [1795497436.896405996] [q1_drive]: [q1_all_seed7] 完成，5 个关键帧
+[q1_drive-2] [INFO] [1795497436.897040878] [q1_drive]: 输出 1 行：/home/moke/bajie_submission_ws/靳喻宝-曾煜翔/answers/q1_demo_output.jsonl
+[INFO] [q1_drive-2]: process has finished cleanly [pid 1532856]
+[INFO] [rviz2-3]: process has finished cleanly [pid 1532857]
