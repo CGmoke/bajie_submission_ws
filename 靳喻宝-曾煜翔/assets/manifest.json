@@ -1,6 +1,6 @@
 {
   "description": "八界杯初赛交付物哈希清单；answers 与 assets 逐项绑定，供评审回溯",
-  "generated_at_utc": "2026-11-24T10:33:40Z",
+  "generated_at_utc": "2026-11-25T17:59:00Z",
   "official_assets": {
     "src/bajie_robot/urdf/bajie_robot.urdf.xacro": {
       "expected_sha256": "6dc26b06aafb82aa7030eabf54e5c181b17b4173eb8fc5e64103fbcbdb0d8f49",
@@ -25,8 +25,8 @@
       "sha256": "374922903c427b311da618197845e0d867d9a986bbf991846ba6dbea6c6dd921"
     },
     "assets/q1_run.log": {
-      "bytes": 3320,
-      "sha256": "addfb3d59f7eb943f2be3b72e921cb2d6309eed47685d46242d40eac97eb375a"
+      "bytes": 3314,
+      "sha256": "b26b7470f088cb907694867e21d23e9babd3ce45cac1662c3f26b183c899390d"
     },
     "assets/q2_humble_verify.log": {
       "bytes": 5230,
@@ -157,8 +157,8 @@
       "sha256": "5e316167f204e626d5b7619e6d3fcfd39424f923eefe737656474f2f01bdd9eb"
     },
     "video/README.md": {
-      "bytes": 1557,
-      "sha256": "76f4adff39c0fceb9352ef12393b646bdb61412524bea03c2f91126eb7cb2d9d"
+      "bytes": 922,
+      "sha256": "36e0ab0402dfb2e04a1b93ce55fdd3f3cae57eef4fbb50c07c8588e8d0cc127b"
     },
     "video/q1_rviz.mp4": {
       "bytes": 888772,

@@ -20,7 +20,7 @@
 - **作品简介**：基于官方八界模型完成初赛三题。题目一在 RViz 中按升降 → 头部 → 机械臂 → 夹爪张开 → 夹爪闭合的顺序分步驱动 10 个关节，每个阶段结束记录关键帧并保持 `pause_sec`；题目二不依赖 TF，直接由 URDF 关节链自研正向运动学，给出夹爪在底盘系与物体在夹爪系的位姿，并用独立的 `robot_state_publisher + TF2` 进程交叉复核；题目三在 Isaac Sim 4.5 中经 ROS 2 Bridge 驱动机械臂，对魔方、恐龙、软玩具三件玩具逐一完成真实 PhysX 接触，并把接触瞬间的十关节实测值与三方位姿落成可回溯的证据文件。三题作答均为 JSONL，`id` 与输入一一对应。
 - **创新点**：① 题目二用两套彼此独立的实现（自研 URDF 正解、ROS 2 TF2）互相印证，三个测例误差均在 1e-15 量级；② 题目三按玩具形态选姿态而不是一套参数打天下（魔方贴合侧推、恐龙与软玩具腕部垂直下压且不合指），并用「可见表面接触 + 玩具位移上限」双判据排除擦过与推倒；③ 每次触碰都落成 `run.json` + `contact-<case>.json` + `events.jsonl`，作答的每一行都能回查到具体帧；④ 一条 `src/question1_project/run_all.sh` 复现三题，四个自检脚本均以退出码表达结论，可直接接入 CI。
 - **作品版本**：v1.0.0
-- **作品仓库**：AtomGit 独立作品仓库，地址在建仓后回填为 `https://atomgit.com/<用户名或组织名>/<仓库名>`。
+- **作品仓库**：AtomGit 独立作品仓库，**须设为公开仓库**；地址在建仓后回填为 `https://atomgit.com/<用户名或组织名>/<仓库名>`。
 - **实现状态**：
 
 | 题目                     | 已完成                                                                         | 待完成 | 实际验证情况                                                                                                                                                                |
@@ -284,6 +284,64 @@ Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 - 当前三份作答的 SHA-256：`answers/q1_demo_output.jsonl` = `6e7db6baf7f1f5a2…9fdc2081`，`answers/q2_demo_output.jsonl` = `98fd3d8092265eef…42474cc37`，`answers/q3_demo_output.jsonl` = `374922903c427b31…6c6dd921`（完整值见 `assets/manifest.json`）。
 - 题目三的玩具位姿为**接触时刻的实测值**，不是输入的初始位姿：玩具被碰到后本身会位移（日志记 `max_toy_shift_mm` 0.15~1.61 mm），这一点在核对时需注意。
 
+## 5.1 代码参数
+
+这一节把三题用到的可调参数、阈值和环境变量都列出来，评审可以直接对着源码核对；本作品的作答就是按下面这套取值跑出来的，改任何一项都会改变结果。
+
+**题目一**（`src/question1_project/bajie_tasks/`）
+
+| 参数               | 取值                                                                                              | 位置                 | 作用                                                       |
+| ------------------ | ------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------- |
+| `SEED_RANGES`    | `lift_joint` 0.18~0.38、`pitch_joint` −0.25~0.25、`joint1/3/4/6` ±1.35、`joint2` −1.10~0.70、`joint5` ±1.08 | `q1_drive.py:36`   | `seed` 抽样区间，抽样结果必须落在 URDF 限位内              |
+| `GRIPPER_OPEN_RANGE` | 0.28~0.45 rad                                                                                | `q1_drive.py:46`   | 夹爪张开阶段的抽样区间                                     |
+| `STAGES_ALL`     | `lift` → `head` → `arm` → `gripper_open` → `gripper_close`（固定顺序）                          | `q1_drive.py:48`   | 五个驱动阶段，顺序不可调换                                 |
+| `PAUSE_STAGES`   | `lift`、`head`、`arm`                                                                           | `q1_drive.py:49`   | 这三个阶段结束后保持 `pause_sec`；夹爪两阶段不保持       |
+| `GROUND_CLEARANCE` | 0.05 m                                                                                          | `q1_safety.py:17`  | 地面（`base_footprint` 下 z=0）净空阈值，低于即 WARN      |
+| `BODY_CLEARANCE` | 0.02 m                                                                                          | `q1_safety.py:18`  | 机身自碰净空阈值                                           |
+| `publish_hz`     | 30.0 Hz                                                                                         | `q1_drive.py:57`   | `JointState` 发布频率                                     |
+| `move_sec`       | 3.0 s/段                                                                                        | 由输入文件给出       | smoothstep 插值时长                                        |
+
+**题目二**（`src/question2_project/`）
+
+| 参数          | 取值                  | 位置                         | 作用                                             |
+| ------------- | --------------------- | ---------------------------- | ------------------------------------------------ |
+| `POSITION_TOLERANCE_M` | 1e-8 m   | `verify_tf.py:27`            | `--verify` 的位移复核阈值                        |
+| `ROTATION_TOLERANCE_RAD` | 1e-7 rad | `verify_tf.py:28`        | `--verify` 的姿态复核阈值                        |
+| 关节链        | 12 个关节，`base_joint` → `object_joint` | `fk.py:151`（`from_urdf`） | 由 URDF 自动提取，不在代码里硬编码 |
+
+**题目三**（`src/question3_project/`）
+
+| 参数                   | 取值                                            | 位置                 | 作用                                                                          |
+| ---------------------- | ----------------------------------------------- | -------------------- | ----------------------------------------------------------------------------- |
+| `TOYS`               | `rubik_cube`→`Rubik`、`dinosaur`→`toy_yellow_dragon`、`soft_toy`→`spiderman_grasp` | `touch.py:19` | 测例名到 USD prim 名的映射 |
+| `JOINTS`             | `lift_joint`、`pitch_joint`、`joint1`~`joint6`、`arm_finger_joint1/2` | `touch.py:18` | 受控关节，共 10 个 |
+| `shift_limit`        | 0.002 m（合指类）／0.006 m（垂直下压、跨窄边合指） | `run_touch.py:407`、`490`、`518` | 玩具位移上限，超限即判 `TouchMiss`，防止把玩具推倒 |
+| `stable_contact_frames` | 6 帧                                        | `touch.py:244`（`hold_contact` 的 `stable_frames`） | 连续 6 帧满足双判据才确认接触，滤掉单帧抖动；丢失 6 帧后最多补 4 次    |
+| `check_touch`        | 非目标接触即判 `TouchMiss`；接触早于 `touch` 相位同样判失败 | `touch.py:208` | 双判据之一：PhysX 接触 + 相位正确                              |
+| `wrist_settled`      | 关节误差 ≤ 0.001 rad（`lift`）/ ≤ 0.006 rad（`joint1`~`joint6`），速度 ≤ 0.025 rad/s | `run_touch.py:509` | 判定腕部已到位再采信接触                                     |
+| 下压步长               | 0.25 mm/次                                      | `touch.py:409`     | `lower_contact_command` 的单次增量                                     |
+| `descent_bottom`     | `max(0.004, min(toy_top, aim_z) + pad_down − 0.003)` | `run_touch.py:520` | 下探最低点，避免穿模                                                       |
+| IK 求解                | `scipy.optimize.least_squares`，`max_nfev=100`、`gtol=1e-8`，解夹在关节限位内 | `touch.py:378`  | 增量 IK，初值取上一帧解；残差 > 4 mm 判失败 |
+
+**题目三环境变量**
+
+| 变量                | 默认值                            | 作用                                                          |
+| ------------------- | --------------------------------- | ------------------------------------------------------------- |
+| `Q3_STRATEGY`     | `adaptive-fallback`             | 规划策略，可选 `adaptive` / `baseline`                      |
+| `Q3_RESULT_DIR`   | 临时目录                          | 作答输出目录；本作品用 `$PWD/answers`                       |
+| `Q3_LOG_DIR`      | `assets/q3_logs`                | `run.json`、`contact-*.json`、`events.jsonl` 的落盘位置 |
+| `Q3_GUI`          | 空（无界面）                      | 置 1 打开 Isaac Sim 原生窗口（容器路径用）                    |
+| `Q3_TIMEOUT`      | 单例 600 s、整轮 1800 s         | 超时强制终止                                                  |
+| `Q3_SKIP_CHECKS`  | 空（预检开启）                    | 置 1 跳过内存与显存预检                                       |
+| `Q3_IMAGE`        | `bajie/sim:humble45`            | 容器路径使用的镜像名                                          |
+| `Q3_MEM`          | `12g`                           | 容器内存上限                                                  |
+| `Q3_CPUS` / `Q3_THREADS` | 未设                      | 容器 CPU 与线程数                                             |
+| `Q3_CACHE_DIR`    | `~/.cache/bajie-q3-kit`         | 着色器缓存目录，热缓存后整轮更快                              |
+| `Q3_DEBUG_PLANS`  | 空                                | 置 1 打印每一步的规划与接触调试信息                           |
+| `Q3_LOG_LEVEL`    | 未设                              | 日志级别                                                      |
+
+内存与显存预检门槛为可用内存 ≥ 12,800 MiB、空闲显存 ≥ 6,000 MiB，定义在 `run_q3.sh`。
+
 ## 六、复现步骤与材料
 
 从克隆仓库开始，到三题各自写出作答为止，按顺序给命令。每步都写了预期输出；跑不出来就照着那行提示往下查。
@@ -450,14 +508,15 @@ bash src/question1_project/run_all.sh
 ## 七、提交前自查
 
 - [X] 已填写作品信息、成员分工、功能与创新点及作品版本。
-- [X] 已在 AtomGit 上重新创建独立作品仓库，并按飞书作品提交表要求登记仓库链接、作品信息及评审访问权限。
+- [ ] 已在 AtomGit 上重新创建独立作品仓库，并按飞书作品提交表要求登记仓库链接、作品信息及评审访问权限。（**待完成**：仓库尚未创建，前置条件见 6.2；仓库须设为公开，不得私有。）
 - [X] 三道题的完整源码和必要配置均放入对应的 `src/` 目录。
 - [X] 已列明依赖版本、安装方法、各题执行目录及实际启动命令（第三、四节）。
 - [X] 每道题的命令均能找到对应输入并生成作答文件。
 - [X] 输出采用 JSONL，测例编号、关节字段、位姿字段与单位符合题面要求（第五节）。
 - [X] 已在 `assets/` 提供各题完整运行日志，在 `video/` 提供题目一、题目三的演示视频。
+- [X] 与作答配套的日志与代码参数齐全：`assets/` 有三题完整终端日志与题三 7 次运行的结构化产物，关键阈值与环境变量已在 5.1 逐项列明并标注源码行号。
 - [X] 单个视频文件大小不超过 30 MB，视频能够正常播放，关键动作与结果清晰（6.1）。
-- [X] 已在文档中说明实际验证结果、尚未完成的功能和运行限制（第一节「实现状态」与「运行限制」）。
+- [X] 已说明实际验证结果、尚未完成的功能和运行限制（第一节「实现状态」与「运行限制」）。
 - [X] 外部材料的来源、版本、许可与访问条件已写明（3.2 与第八节）。
 - [X] 提交材料范围已检查，密钥、访问令牌、个人隐私数据及无权公开的材料已清理；`build/`、`install/`、`log/`、`__pycache__` 已由 `.gitignore` 排除，交付目录内也不再保留。
 
