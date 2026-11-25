@@ -286,63 +286,132 @@ Q3_GUI=1 Q3_RESULT_DIR="$PWD/answers" bash src/question3_project/run_docker.sh
 
 ## 5.1 代码参数
 
-这一节把三题用到的可调参数、阈值和环境变量都列出来，评审可以直接对着源码核对；本作品的作答就是按下面这套取值跑出来的，改任何一项都会改变结果。
+这一节把三题用到的全部参数列出来：命令行开关、ROS 参数、环境变量、写死在源码里的阈值常量，以及由输入文件驱动的运行时长。每一项都标了默认值和源码位置，评审可以直接对着核对。本作品的作答就是按下面这套取值跑出来的，改任何一项都会改变结果。
 
-**题目一**（`src/question1_project/bajie_tasks/`）
+### 5.1.1 题目一
 
-| 参数               | 取值                                                                                              | 位置                 | 作用                                                       |
-| ------------------ | ------------------------------------------------------------------------------------------------- | -------------------- | ---------------------------------------------------------- |
-| `SEED_RANGES`    | `lift_joint` 0.18~0.38、`pitch_joint` −0.25~0.25、`joint1/3/4/6` ±1.35、`joint2` −1.10~0.70、`joint5` ±1.08 | `q1_drive.py:36`   | `seed` 抽样区间，抽样结果必须落在 URDF 限位内              |
-| `GRIPPER_OPEN_RANGE` | 0.28~0.45 rad                                                                                | `q1_drive.py:46`   | 夹爪张开阶段的抽样区间                                     |
-| `STAGES_ALL`     | `lift` → `head` → `arm` → `gripper_open` → `gripper_close`（固定顺序）                          | `q1_drive.py:48`   | 五个驱动阶段，顺序不可调换                                 |
-| `PAUSE_STAGES`   | `lift`、`head`、`arm`                                                                           | `q1_drive.py:49`   | 这三个阶段结束后保持 `pause_sec`；夹爪两阶段不保持       |
-| `GROUND_CLEARANCE` | 0.05 m                                                                                          | `q1_safety.py:17`  | 地面（`base_footprint` 下 z=0）净空阈值，低于即 WARN      |
-| `BODY_CLEARANCE` | 0.02 m                                                                                          | `q1_safety.py:18`  | 机身自碰净空阈值                                           |
-| `publish_hz`     | 30.0 Hz                                                                                         | `q1_drive.py:57`   | `JointState` 发布频率                                     |
-| `move_sec`       | 3.0 s/段                                                                                        | 由输入文件给出       | smoothstep 插值时长                                        |
+ROS 参数（`q1_drive.py:55-58` 声明，`launch/q1_rviz.launch.py:32-35` 提供默认值）
 
-**题目二**（`src/question2_project/`）
+| 参数                 | 默认值                              | 作用                                                         |
+| -------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| `input_file`       | `inputs/q1_demo_input.jsonl`      | 测例输入路径                                                 |
+| `output_file`      | `answers/q1_demo_output.jsonl`    | 作答输出路径，原子写入                                       |
+| `publish_hz`       | 30.0 Hz                             | `/joint_states` 发布频率；插值步数 = `move_sec × publish_hz` |
+| `robot_description` | xacro 展开结果                      | 由 launch 现场展开，不从文件读旧值                           |
 
-| 参数          | 取值                  | 位置                         | 作用                                             |
-| ------------- | --------------------- | ---------------------------- | ------------------------------------------------ |
-| `POSITION_TOLERANCE_M` | 1e-8 m   | `verify_tf.py:27`            | `--verify` 的位移复核阈值                        |
-| `ROTATION_TOLERANCE_RAD` | 1e-7 rad | `verify_tf.py:28`        | `--verify` 的姿态复核阈值                        |
-| 关节链        | 12 个关节，`base_joint` → `object_joint` | `fk.py:151`（`from_urdf`） | 由 URDF 自动提取，不在代码里硬编码 |
+由输入文件驱动的时长（`q1_drive.py:187-188`）
 
-**题目三**（`src/question3_project/`）
+| 字段          | 默认值  | 作用                                           |
+| ------------- | ------- | ---------------------------------------------- |
+| `move_sec`  | 3.0 s   | 每段 smoothstep 插值时长，每段结束记录关键帧   |
+| `pause_sec` | 5.0 s   | `lift`/`head`/`arm` 段结束后的保持时间         |
 
-| 参数                   | 取值                                            | 位置                 | 作用                                                                          |
-| ---------------------- | ----------------------------------------------- | -------------------- | ----------------------------------------------------------------------------- |
-| `TOYS`               | `rubik_cube`→`Rubik`、`dinosaur`→`toy_yellow_dragon`、`soft_toy`→`spiderman_grasp` | `touch.py:19` | 测例名到 USD prim 名的映射 |
-| `JOINTS`             | `lift_joint`、`pitch_joint`、`joint1`~`joint6`、`arm_finger_joint1/2` | `touch.py:18` | 受控关节，共 10 个 |
-| `shift_limit`        | 0.002 m（合指类）／0.006 m（垂直下压、跨窄边合指） | `run_touch.py:407`、`490`、`518` | 玩具位移上限，超限即判 `TouchMiss`，防止把玩具推倒 |
-| `stable_contact_frames` | 6 帧                                        | `touch.py:244`（`hold_contact` 的 `stable_frames`） | 连续 6 帧满足双判据才确认接触，滤掉单帧抖动；丢失 6 帧后最多补 4 次    |
-| `check_touch`        | 非目标接触即判 `TouchMiss`；接触早于 `touch` 相位同样判失败 | `touch.py:208` | 双判据之一：PhysX 接触 + 相位正确                              |
-| `wrist_settled`      | 关节误差 ≤ 0.001 rad（`lift`）/ ≤ 0.006 rad（`joint1`~`joint6`），速度 ≤ 0.025 rad/s | `run_touch.py:509` | 判定腕部已到位再采信接触                                     |
-| 下压步长               | 0.25 mm/次                                      | `touch.py:409`     | `lower_contact_command` 的单次增量                                     |
-| `descent_bottom`     | `max(0.004, min(toy_top, aim_z) + pad_down − 0.003)` | `run_touch.py:520` | 下探最低点，避免穿模                                                       |
-| IK 求解                | `scipy.optimize.least_squares`，`max_nfev=100`、`gtol=1e-8`，解夹在关节限位内 | `touch.py:378`  | 增量 IK，初值取上一帧解；残差 > 4 mm 判失败 |
+源码常量
 
-**题目三环境变量**
+| 参数                 | 取值                                                                                                 | 位置                | 作用                                      |
+| -------------------- | ---------------------------------------------------------------------------------------------------- | ------------------- | ----------------------------------------- |
+| `SEED_RANGES`      | `lift_joint` 0.18~0.38、`pitch_joint` −0.25~0.25、`joint1/3/4/6` ±1.35、`joint2` −1.10~0.70、`joint5` ±1.08 | `q1_drive.py:36`  | `seed` 抽样区间，结果须落在 URDF 限位内 |
+| `GRIPPER_OPEN_RANGE` | 0.28~0.45 rad                                                                                       | `q1_drive.py:46`  | 夹爪张开阶段的抽样区间                    |
+| `STAGES_ALL`       | `lift` → `head` → `arm` → `gripper_open` → `gripper_close`                                         | `q1_drive.py:48`  | 五个驱动阶段，顺序不可调换                |
+| `PAUSE_STAGES`     | `lift`、`head`、`arm`                                                                                | `q1_drive.py:49`  | 这三个阶段结束后保持 `pause_sec`        |
+| `GROUND_CLEARANCE` | 0.05 m                                                                                               | `q1_safety.py:17` | 地面（`base_footprint` 下 z=0）净空阈值   |
+| `BODY_CLEARANCE`   | 0.02 m                                                                                               | `q1_safety.py:18` | 机身自碰净空阈值                          |
 
-| 变量                | 默认值                            | 作用                                                          |
-| ------------------- | --------------------------------- | ------------------------------------------------------------- |
-| `Q3_STRATEGY`     | `adaptive-fallback`             | 规划策略，可选 `adaptive` / `baseline`                      |
-| `Q3_RESULT_DIR`   | 临时目录                          | 作答输出目录；本作品用 `$PWD/answers`                       |
-| `Q3_LOG_DIR`      | `assets/q3_logs`                | `run.json`、`contact-*.json`、`events.jsonl` 的落盘位置 |
-| `Q3_GUI`          | 空（无界面）                      | 置 1 打开 Isaac Sim 原生窗口（容器路径用）                    |
-| `Q3_TIMEOUT`      | 单例 600 s、整轮 1800 s         | 超时强制终止                                                  |
-| `Q3_SKIP_CHECKS`  | 空（预检开启）                    | 置 1 跳过内存与显存预检                                       |
-| `Q3_IMAGE`        | `bajie/sim:humble45`            | 容器路径使用的镜像名                                          |
-| `Q3_MEM`          | `12g`                           | 容器内存上限                                                  |
-| `Q3_CPUS` / `Q3_THREADS` | 未设                      | 容器 CPU 与线程数                                             |
-| `Q3_CACHE_DIR`    | `~/.cache/bajie-q3-kit`         | 着色器缓存目录，热缓存后整轮更快                              |
-| `Q3_DEBUG_PLANS`  | 空                                | 置 1 打印每一步的规划与接触调试信息                           |
-| `Q3_LOG_LEVEL`    | 未设                              | 日志级别                                                      |
+### 5.1.2 题目二
 
-内存与显存预检门槛为可用内存 ≥ 12,800 MiB、空闲显存 ≥ 6,000 MiB，定义在 `run_q3.sh`。
+命令行参数（三个都是必填，`solve_q2.py:74`、`verify_tf.py:134-135`）
+
+| 参数        | 是否必填 | 作用                                   |
+| ----------- | -------- | -------------------------------------- |
+| `--urdf`  | 必填     | 官方 xacro 展开后的 URDF 路径          |
+| `--input` | 必填     | 测例输入 JSONL                         |
+| `--output`| 仅 `solve_q2.py` | 作答输出路径                   |
+
+复核阈值与超时
+
+| 参数                       | 取值    | 位置              | 作用                                          |
+| -------------------------- | ------- | ----------------- | --------------------------------------------- |
+| `POSITION_TOLERANCE_M`   | 1e-8 m  | `verify_tf.py:27` | `--verify` 位移复核阈值                     |
+| `ROTATION_TOLERANCE_RAD` | 1e-7 rad | `verify_tf.py:28`| `--verify` 姿态复核阈值                     |
+| 单例取样截止               | 8.0 s   | `verify_tf.py:70` | 起 `robot_state_publisher` 后等 TF 的最长时间 |
+| 单帧取样窗口               | 0.3 s   | `verify_tf.py:86` | 同一时间戳内等 TF 的时长，避免误拿上例残留    |
+| `spin_once` 轮询间隔     | 0.02 s  | `verify_tf.py:88` | TF 轮询粒度                                   |
+| 收尾终止等待               | 3 s     | `verify_tf.py:156`| 结束后 `terminate` 收子进程的超时          |
+| 关节链                     | 12 个关节，`base_joint` → `object_joint` | `fk.py:151` | 由 URDF 自动提取，不硬编码        |
+
+`--verify` 跑三组用例：原示例、`lift_joint +0.1`、以及一组全关节异动且物体姿态改 `rpy=[0.2, -0.3, 0.5]` 的用例（`verify_tf.py:31-43`）。
+
+### 5.1.3 题目三
+
+命令行参数（`run_touch.py:561-582`）
+
+| 参数            | 默认值                | 作用                                                         |
+| --------------- | --------------------- | ------------------------------------------------------------ |
+| `--scene`     | 必填                  | 场景 USD（`src/bajie_sim/scene/abr_scene.usd`）            |
+| `--urdf`      | 必填                  | 展开后的 URDF，与题目二共用                                  |
+| `--input`     | 必填                  | 三个玩具测例的输入 JSONL                                     |
+| `--output`    | 与 `--case` 互斥    | 整轮写完 3 行，原子落盘                                      |
+| `--case`      | 与 `--output` 互斥  | 只验单个玩具（`rubik_cube`/`dinosaur`/`soft_toy`），不写作答 |
+| `--gui`       | 关                    | 打开 Isaac Sim 原生窗口并渲染                                |
+| `--strategy`  | `adaptive-fallback` | 可选 `baseline` / `adaptive` / `adaptive-fallback`       |
+| `--log-dir`   | 取 `Q3_LOG_DIR`     | 结构化日志目录；都没有时只打印不落盘                         |
+| `--log-level` | `info`              | `debug`/`info`/`warn`/`error`，或由 `Q3_LOG_LEVEL` 给     |
+
+双判据与接触确认
+
+| 参数                     | 取值                                    | 位置              | 作用                                                       |
+| ------------------------ | --------------------------------------- | ----------------- | ---------------------------------------------------------- |
+| `TOYS`                 | `rubik_cube`→`Rubik`、`dinosaur`→`toy_yellow_dragon`、`soft_toy`→`spiderman_grasp` | `touch.py:19` | 测例名到 USD prim 名的映射          |
+| `JOINTS`               | `lift_joint`、`pitch_joint`、`joint1`~`joint6`、`arm_finger_joint1/2` | `touch.py:18` | 受控关节，共 10 个                            |
+| `is_surface_contact`   | `separation ≤ 0` 且 `impulse > 1e-6` | `touch.py:124-126` | 可见表面接触判据：拒绝正间隙（哪怕微米级）的预测性接触 |
+| `check_touch`          | 非目标接触即 `TouchMiss`；接触早于 `touch` 相位同样失败 | `touch.py:208` | 触点须一指一玩具，落在其他运动体上判 `blocked` |
+| `stable_frames`        | 6 帧                                    | `touch.py:244`    | 连续 6 帧满足判据才确认接触                                |
+| `loss_frames`          | 6 帧                                    | `touch.py:244`    | 丢失 6 帧后开始补碰                                        |
+| `max_corrections`      | 4 次                                    | `touch.py:245`    | 最多补碰次数，超限判 `TouchMiss`                         |
+| `max_frames`           | 60 帧                                   | `touch.py:245`    | 保持阶段总帧数上限                                         |
+| `shift_limit`          | 0.002 m（合指类）／0.006 m（下压、跨窄边合指） | `run_touch.py:407`、`490`、`518` | 玩具位移上限，超限停手，防止推倒玩具 |
+| `wrist_settled`        | 误差 ≤ 0.001 rad（`lift`）/ ≤ 0.006 rad（`joint1`~`joint6`），速度 ≤ 0.025 rad/s | `run_touch.py:509` | 腕部到位判定；连续 4 帧满足即认为停稳 |
+
+运动与规划
+
+| 参数                | 取值                                                     | 位置               | 作用                                    |
+| ------------------- | -------------------------------------------------------- | ------------------ | --------------------------------------- |
+| `DT`              | 1/60 s                                                   | `run_touch.py:31`  | 仿真步长，与 PhysX 60 Hz 对齐           |
+| 各阶段关节速度      | `clear` 0.30、`align` 0.90、`open` 0.30、`approach` 0.30、`touch` 0.10（rad/步） | `touch.py:230` | 分阶段限速，`touch` 段最慢        |
+| 下探子步            | 0.004 m                                                  | `run_touch.py:526` | 竖直下探的每次 IK 目标增量              |
+| 下探速度            | 首步 0.60、其后 0.25                                     | `run_touch.py:530` | 下探段关节速度                          |
+| 下压步长            | 0.25 mm/次                                               | `touch.py:409-410` | `lower_contact_command` 单次增量      |
+| 悬停高度            | `max(0.25, 接触点 + 0.10~0.12)` m                      | `touch.py:483-484`、`514` | 各姿态的预接近高度              |
+| 接近段高度          | 接触点上方 12 mm                                         | `touch.py:483`     | `_press` 姿态的 approach 高度         |
+| 下压目标            | 玩具顶面以下 24 mm（软玩具躯干）                         | `touch.py:513`     | `soft_toy_grasp` 的 goal 深度         |
+| 夹爪开合            | 张开 `finger_max − 0.004`、闭合 `finger_min + 0.004` | `touch.py:516-517` | 留 4 mrad 余量，不顶死限位      |
+| `descent_bottom`  | `max(0.004, min(toy_top, aim_z) + pad_down − 0.003)`   | `run_touch.py:521` | 下探最低点，避免穿模                    |
+| 接近路点插值        | 每次 0.010 m 递增                                         | `touch.py:788`     | 悬停到接触之间的路点数                  |
+| IK 求解             | `least_squares`，`max_nfev=100`、`gtol=1e-8`，解夹在关节限位内 | `touch.py:378` | 残差 > 4 mm 判失败，位置权重 1、姿态权重 0.25 |
+| `execute_clearance` | `speed=0.12`、`release_frames=4`                      | `touch.py:151`     | 退出时抬离玩具的速度与判定帧数          |
+
+环境变量（`run_q3.sh` / `run_docker.sh`）
+
+| 变量                | 默认值                          | 作用                                                          |
+| ------------------- | ------------------------------- | ------------------------------------------------------------- |
+| `Q3_STRATEGY`     | `adaptive-fallback`           | 规划策略，与 `--strategy` 同义                              |
+| `Q3_RESULT_DIR`   | 临时目录                        | 作答输出目录；本作品用 `$PWD/answers`                       |
+| `Q3_LOG_DIR`      | `assets/q3_logs`              | `run.json`、`contact-*.json`、`events.jsonl` 的落盘位置 |
+| `Q3_GUI`          | 空（无界面）                    | 置 1 打开原生窗口（容器路径用）                               |
+| `Q3_TIMEOUT`      | 单例 600 s、整轮 1800 s       | 超时强制终止                                                  |
+| `Q3_SKIP_CHECKS`  | 空（预检开启）                  | 置 1 跳过内存与显存预检                                       |
+| `Q3_IMAGE`        | `bajie/sim:humble45`          | 容器路径使用的镜像名                                          |
+| `Q3_MEM`          | `12g`                         | 容器内存上限                                                  |
+| `Q3_CPUS`         | 未设                            | 容器 CPU 数                                                   |
+| `Q3_THREADS`      | 未设                            | 渲染线程数                                                    |
+| `Q3_CACHE_DIR`    | `~/.cache/bajie-q3-kit`       | 着色器缓存目录，热缓存后整轮更快                              |
+| `Q3_DEBUG_PLANS`  | 空                              | 置 1 打印每一步规划与接触调试信息                             |
+| `Q3_LOG_LEVEL`    | 未设（`info`）                | 日志级别                                                      |
+
+启动预检门槛（`run_q3.sh:119`）：可用内存 ≥ 12,800 MiB、空闲显存 ≥ 6,000 MiB；显存查询超时 3 s。实测 11.8 GB 内存可跑完三例，此时设 `Q3_SKIP_CHECKS=1`。
 
 ## 六、复现步骤与材料
+
 
 从克隆仓库开始，到三题各自写出作答为止，按顺序给命令。每步都写了预期输出；跑不出来就照着那行提示往下查。
 
