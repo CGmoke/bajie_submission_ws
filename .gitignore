@@ -1,4 +1,5 @@
 # 工作区根目录的临时产物，不属于作品提交内容
 .Trash-0/
 .chk/
+.workbuddy/
 .DS_Store
